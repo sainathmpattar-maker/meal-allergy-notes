@@ -23,7 +23,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout()
-    navigate('/login')
+    navigate('/')
     setMenuOpen(false)
   }
 
@@ -42,19 +42,20 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {user ? (
-          <>
-            <button
-              className={`hamburger ${menuOpen ? 'active' : ''}`}
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle navigation menu"
-              aria-expanded={menuOpen}
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-            <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
+        <button
+          className={`hamburger ${menuOpen ? 'active' : ''}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
+          {user ? (
+            <>
               <Link to="/" className="nav-pill-link" onClick={() => setMenuOpen(false)}>
                 Events
               </Link>
@@ -67,21 +68,21 @@ export default function Navbar() {
                 <span className="user-name">{user.name}</span>
                 <span className="badge badge-role">{user.role}</span>
               </div>
-              <button className="btn btn-sm btn-ghost" onClick={handleLogout}>
+              <button className="btn btn-sm btn-ghost navbar-logout-btn" onClick={handleLogout}>
                 Logout
               </button>
+            </>
+          ) : (
+            <div className="navbar-auth-links">
+              <Link to="/login" className="btn btn-sm btn-ghost" onClick={() => setMenuOpen(false)}>
+                Log in
+              </Link>
+              <Link to="/register" className="btn btn-sm btn-primary" onClick={() => setMenuOpen(false)}>
+                Register <span className="btn-arrow">→</span>
+              </Link>
             </div>
-          </>
-        ) : (
-          <div className="navbar-auth-links">
-            <Link to="/login" className="btn btn-sm btn-ghost">
-              Log in
-            </Link>
-            <Link to="/register" className="btn btn-sm btn-primary">
-              Register <span className="btn-arrow">→</span>
-            </Link>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </nav>
   )

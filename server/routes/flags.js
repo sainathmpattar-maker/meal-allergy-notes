@@ -8,7 +8,16 @@ const { rescanEvent } = require('../utils/allergyCheck');
 // POST /api/events/:eventId/flags/run — rescan event for allergy conflicts
 router.post('/events/:eventId/flags/run', requireAuth, requireRole('organiser'), async (req, res, next) => {
   try {
-    const flags = await rescanEvent(req.params.eventId);
+    await rescanEvent(req.params.eventId);
+    const flags = await AllergyFlag.find({ event: req.params.eventId })
+      .populate('meal', 'name ingredients')
+      .populate({
+        path: 'registration',
+        select: 'allergies dietaryPreference user',
+        populate: { path: 'user', select: 'name email' }
+      })
+      .populate('reviewedBy', 'name')
+      .sort('-createdAt');
     res.json({ message: 'Allergy check complete', count: flags.length, flags });
   } catch (err) { next(err); }
 });

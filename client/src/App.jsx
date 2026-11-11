@@ -25,12 +25,13 @@ function HomeRoute() {
 
 function AnimatedAppContent() {
   const location = useLocation()
+  const { user } = useAuth()
 
   return (
     <div className="app-container">
       <Navbar />
       <main className="main-content">
-        <div key={location.pathname} className="page-transition">
+        <div key={`${location.pathname}-${user ? user.role || 'auth' : 'anon'}`} className="page-transition">
           <Routes location={location}>
             {/* Public auth routes */}
             <Route path="/login" element={<Login />} />
