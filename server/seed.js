@@ -1,4 +1,8 @@
 const path = require('path');
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (_) {}
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -10,8 +14,16 @@ const AllergyFlag = require('./models/AllergyFlag');
 const { findConflicts } = require('./utils/allergyCheck');
 
 async function seed() {
-  await mongoose.connect(process.env.MONGO_URI);
-  console.log('Connected to MongoDB');
+  const primaryUri = process.env.MONGO_URI;
+  const localUri = 'mongodb://127.0.0.1:27017/meal-allergy-notes';
+  try {
+    await mongoose.connect(primaryUri, { serverSelectionTimeoutMS: 3000 });
+    console.log('Connected to MongoDB');
+  } catch (err) {
+    console.warn(`Primary connection failed (${err.message}). Connecting to local MongoDB...`);
+    await mongoose.connect(localUri, { serverSelectionTimeoutMS: 3000 });
+    console.log('Connected to local MongoDB');
+  }
 
   // Clear all collections
   await Promise.all([
@@ -41,10 +53,12 @@ async function seed() {
   const [a1, a2, a3] = attendees;
   console.log('Created 4 users');
 
-  // Create event
+  // Create event (future date 30 days ahead)
+  const futureDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  const currentYear = futureDate.getFullYear();
   const event = await Event.create({
-    title: 'Annual Tech Conference 2024',
-    date: new Date('2024-12-15T09:00:00Z'),
+    title: `Annual Tech Conference ${currentYear}`,
+    date: futureDate,
     location: 'Mumbai Convention Centre',
     createdBy: organiser._id
   });
