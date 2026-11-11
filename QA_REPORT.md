@@ -102,3 +102,24 @@ All discovered issues were fixed at the root cause, verified with clean regressi
    - *Issue*: Behind reverse proxies (e.g. Render), `req.ip` reflects the proxy IP rather than the client IP unless trust proxy is enabled.
    - *Fix*: Added `app.set('trust proxy', 1)` in `server/index.js`.
 
+---
+
+## 5. Live Production Cloud Verification (Render)
+
+**Live Production URL**: [https://meal-allergy-notes.onrender.com/](https://meal-allergy-notes.onrender.com/)  
+**GitHub Repository**: [https://github.com/sainathmpattar-maker/meal-allergy-notes](https://github.com/sainathmpattar-maker/meal-allergy-notes)  
+**Execution Environment**: Live Render Node Web Service + Remote MongoDB Atlas Cluster
+
+| Live Check | Result | Details |
+|---|:---:|---|
+| **Health Check Endpoint** (`/api/health`) | **PASS** | HTTP 200 OK, returns `{"status":"ok","timestamp":"..."}`. |
+| **Landing Page & Google Fonts** | **PASS** | HTTP 200 OK; Anton, Kumbh Sans, and Lora loaded via Helmet CSP. |
+| **Direct SPA Route Deep Link** (`/login`, `/register`, `/my-registrations`) | **PASS** | HTTP 200 OK; Express wildcard routing cleanly serves production React bundle. |
+| **Remote Database Registration & JWT Auth** | **PASS** | Live user creation and password hashing with bcrypt; JWT verification on subsequent requests. |
+| **Live Event Creation & Card Grid** | **PASS** | Organiser created new event; card rendered with date badge, location, and action buttons. |
+| **Meal Creation with Ingredients** | **PASS** | Organiser added dish with ingredient chips (`peanuts`, `soy sauce`, `wheat noodles`). |
+| **Attendee Dining Preference & Allergy Chips** | **PASS** | Attendee selected Vegan preference, added `peanut` allergy chip and personal note. |
+| **Conflict Engine & Warning Banner** | **PASS** | Prominent safety warning banner verified; automated conflict engine detected conflict. |
+| **Human Review Workflow & Persistence** | **PASS** | Organiser verified conflict flag; status changed to `VERIFIED` and persisted across full browser reloads. |
+| **Browser Console Cleanliness** | **PASS** | Zero unhandled exceptions or console errors across all pages. |
+
