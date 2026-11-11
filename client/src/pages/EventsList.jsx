@@ -114,26 +114,33 @@ export default function EventsList() {
     <div>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Events</h1>
+          <span className="eyebrow-label">Coordination Hub</span>
+          <h1 className="page-title">
+            SCHEDULED <span className="word-accent">EVENTS.</span>
+          </h1>
           <p className="page-subtitle">
             {isOrganiser
-              ? 'Manage events, meal plans, registrations and allergy conflict flags'
-              : 'Select an event to submit your dietary preferences and allergy notes'}
+              ? 'Organise menus, manage registered diners, and audit automated allergy flags.'
+              : 'Select an event to submit your dietary requirements and allergy notes.'}
           </p>
         </div>
         {isOrganiser && (
           <button className="btn btn-primary" onClick={openCreateModal}>
-            + Create Event
+            + Create Event <span className="btn-arrow">→</span>
           </button>
         )}
       </div>
 
       {events.length === 0 ? (
         <div className="empty-state">
-          <p>No events found.</p>
+          <div className="empty-state-icon" aria-hidden="true">
+            <span className="empty-emoji">🍽️</span>
+            <span className="empty-fork">🍴</span>
+          </div>
+          <p className="empty-state-message">No upcoming events found on the schedule.</p>
           {isOrganiser && (
             <button className="btn btn-primary" onClick={openCreateModal}>
-              Create your first event
+              Create your first event <span className="btn-arrow">→</span>
             </button>
           )}
         </div>
@@ -142,30 +149,29 @@ export default function EventsList() {
           {events.map(ev => (
             <div
               key={ev._id}
-              className="card card-clickable"
+              className="card card-interactive"
               onClick={() => handleCardClick(ev._id)}
-              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
             >
-              <div>
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>
-                  {ev.title}
-                </h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
-                  📅 {new Date(ev.date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
-                </p>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+              <div className="event-card-header">
+                <span className="event-date-chip">
+                  📅 {new Date(ev.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                </span>
+                <h3 className="event-card-title">{ev.title}</h3>
+                <p className="event-card-location">
                   📍 {ev.location}
                 </p>
               </div>
 
-              <div style={{ marginTop: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.8125rem', color: 'var(--primary)', fontWeight: 600 }}>
-                  {isOrganiser ? 'Open Dashboard →' : 'Set Preferences →'}
+              <div className="event-card-footer">
+                <span className="event-card-cta">
+                  {isOrganiser ? 'Open Dashboard' : 'Set Preferences'}{' '}
+                  <span className="cta-arrow">→</span>
                 </span>
 
                 {isOrganiser && (
-                  <div style={{ display: 'flex', gap: '0.5rem' }} onClick={e => e.stopPropagation()}>
+                  <div className="event-card-actions" onClick={e => e.stopPropagation()}>
                     <button
+                      type="button"
                       className="btn btn-sm btn-secondary"
                       onClick={(e) => openEditModal(e, ev)}
                       title="Edit Event"
@@ -173,7 +179,8 @@ export default function EventsList() {
                       Edit
                     </button>
                     <button
-                      className="btn btn-sm btn-danger"
+                      type="button"
+                      className="btn btn-sm btn-ghost"
                       onClick={(e) => {
                         e.stopPropagation()
                         setDeleteTarget(ev)
@@ -194,16 +201,17 @@ export default function EventsList() {
       {modalOpen && (
         <div className="modal-overlay" onClick={() => setModalOpen(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h3>{editingEvent ? 'Edit Event' : 'Create Event'}</h3>
+            <span className="eyebrow-label">{editingEvent ? 'Update Gathering' : 'New Gathering'}</span>
+            <h3>{editingEvent ? 'Edit Event Details' : 'Plan a New Event'}</h3>
             <form onSubmit={handleSave} noValidate>
               <div className="form-group">
-                <label htmlFor="event-title">Title</label>
+                <label htmlFor="event-title">Event Title</label>
                 <input
                   id="event-title"
                   type="text"
                   value={formData.title}
                   onChange={e => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. Annual Tech Conference 2024"
+                  placeholder="e.g. Summer Gala Dinner 2025"
                   className={formErrors.title ? 'input-error' : ''}
                   autoFocus
                 />
@@ -211,7 +219,7 @@ export default function EventsList() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="event-date">Date</label>
+                <label htmlFor="event-date">Scheduled Date</label>
                 <input
                   id="event-date"
                   type="date"
@@ -223,19 +231,19 @@ export default function EventsList() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="event-location">Location</label>
+                <label htmlFor="event-location">Venue / Location</label>
                 <input
                   id="event-location"
                   type="text"
                   value={formData.location}
                   onChange={e => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="e.g. Mumbai Convention Centre"
+                  placeholder="e.g. Botanical Gardens Dining Hall"
                   className={formErrors.location ? 'input-error' : ''}
                 />
                 {formErrors.location && <span className="field-error">{formErrors.location}</span>}
               </div>
 
-              <div className="modal-actions" style={{ marginTop: '1.5rem' }}>
+              <div className="modal-actions">
                 <button
                   type="button"
                   className="btn btn-secondary"
@@ -249,7 +257,7 @@ export default function EventsList() {
                   className="btn btn-primary"
                   disabled={submitting}
                 >
-                  {submitting ? 'Saving...' : (editingEvent ? 'Update Event' : 'Create Event')}
+                  {submitting ? 'Saving...' : (<>{editingEvent ? 'Update Event' : 'Create Event'} <span className="btn-arrow">→</span></>)}
                 </button>
               </div>
             </form>
@@ -261,11 +269,10 @@ export default function EventsList() {
       <ConfirmDialog
         open={Boolean(deleteTarget)}
         title="Delete Event"
-        message={`Are you sure you want to delete "${deleteTarget?.title}"? This cannot be undone.`}
+        message={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />
     </div>
   )
 }
-

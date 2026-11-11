@@ -22,11 +22,23 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={toast}>
       {children}
-      <div className="toast-container">
+      <div className="toast-container" aria-live="polite">
         {toasts.map(t => (
           <div key={t.id} className={`toast toast-${t.type}`}>
-            <span>{t.message}</span>
-            <button className="toast-close" onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))}>&times;</button>
+            <span className="toast-icon">
+              {t.type === 'success' && '✓'}
+              {t.type === 'error' && '!'}
+              {t.type === 'info' && '•'}
+            </span>
+            <span className="toast-message">{t.message}</span>
+            <button
+              type="button"
+              className="toast-close"
+              onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))}
+              aria-label="Close notification"
+            >
+              ×
+            </button>
           </div>
         ))}
       </div>

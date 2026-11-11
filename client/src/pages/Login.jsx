@@ -43,44 +43,51 @@ export default function Login() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1>🍽️ MealAllergy Notes</h1>
-        <h2>Sign In</h2>
+        <div className="auth-header">
+          <span className="eyebrow-label">Access Portal</span>
+          <h1 className="page-title">SIGN <span className="word-accent">IN.</span></h1>
+          <p className="auth-tagline">Coordinate dietary notes & allergies with total care.</p>
+        </div>
+
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">Your Email Address</label>
             <input
               id="email"
               type="email"
               value={form.email}
               onChange={e => setForm({ ...form, email: e.target.value })}
-              placeholder="you@example.com"
+              placeholder="e.g. attendee@event.org"
               className={errors.email ? 'input-error' : ''}
               autoFocus
             />
             {errors.email && <span className="field-error">{errors.email}</span>}
           </div>
+
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Secret Password</label>
             <input
               id="password"
               type="password"
               value={form.password}
               onChange={e => setForm({ ...form, password: e.target.value })}
-              placeholder="Your password"
+              placeholder="Enter your account password"
               className={errors.password ? 'input-error' : ''}
             />
             {errors.password && <span className="field-error">{errors.password}</span>}
           </div>
+
           {errors.form && <div className="form-error">{errors.form}</div>}
+
           <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Authenticating...' : (<>Sign In <span className="btn-arrow">→</span></>)}
           </button>
         </form>
+
         <p className="auth-link">
-          Don't have an account? <Link to="/register">Register</Link>
+          Need an account? <Link to="/register">Register here</Link>
         </p>
       </div>
     </div>
   )
 }
-

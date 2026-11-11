@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './components/Toast'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import RoleRoute from './components/RoleRoute'
 
@@ -68,10 +69,10 @@ export default function App() {
                 <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>
             </main>
+            <Footer />
           </div>
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   )
 }
-

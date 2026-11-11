@@ -36,8 +36,15 @@ export default function ChipInput({ value = [], onChange, placeholder, suggestio
       <div className="chip-input-wrapper" onClick={() => inputRef.current?.focus()}>
         {value.map((chip, i) => (
           <span key={i} className="chip">
-            {chip}
-            <button type="button" className="chip-remove" onClick={() => removeChip(i)}>&times;</button>
+            <span className="chip-label">{chip}</span>
+            <button
+              type="button"
+              className="chip-remove"
+              onClick={(e) => { e.stopPropagation(); removeChip(i); }}
+              aria-label={`Remove ${chip}`}
+            >
+              ×
+            </button>
           </span>
         ))}
         <input
@@ -48,14 +55,16 @@ export default function ChipInput({ value = [], onChange, placeholder, suggestio
           onKeyDown={handleKeyDown}
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-          placeholder={value.length === 0 ? placeholder : ''}
+          placeholder={value.length === 0 ? placeholder : 'Add more...'}
           className="chip-text-input"
         />
       </div>
       {showSuggestions && input && filteredSuggestions.length > 0 && (
         <ul className="chip-suggestions">
           {filteredSuggestions.map(s => (
-            <li key={s} onMouseDown={() => addChip(s)}>{s}</li>
+            <li key={s} onMouseDown={() => addChip(s)}>
+              + {s}
+            </li>
           ))}
         </ul>
       )}

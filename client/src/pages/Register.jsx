@@ -53,8 +53,12 @@ export default function Register() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1>🍽️ MealAllergy Notes</h1>
-        <h2>Create Account</h2>
+        <div className="auth-header">
+          <span className="eyebrow-label">Join The Table</span>
+          <h1 className="page-title">CREATE <span className="word-accent">ACCOUNT.</span></h1>
+          <p className="auth-tagline">Register to submit preferences or coordinate event menus.</p>
+        </div>
+
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
@@ -69,8 +73,9 @@ export default function Register() {
             />
             {errors.name && <span className="field-error">{errors.name}</span>}
           </div>
+
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">Email Address</label>
             <input
               id="email"
               type="email"
@@ -81,6 +86,7 @@ export default function Register() {
             />
             {errors.email && <span className="field-error">{errors.email}</span>}
           </div>
+
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -88,32 +94,35 @@ export default function Register() {
               type="password"
               value={form.password}
               onChange={e => setForm({ ...form, password: e.target.value })}
-              placeholder="At least 8 characters"
+              placeholder="Minimum 8 characters"
               className={errors.password ? 'input-error' : ''}
             />
             {errors.password && <span className="field-error">{errors.password}</span>}
           </div>
+
           <div className="form-group">
-            <label htmlFor="organiserCode">Organiser Code (optional)</label>
+            <label htmlFor="organiserCode">Organiser Passcode (Optional)</label>
             <input
               id="organiserCode"
               type="text"
               value={form.organiserCode}
               onChange={e => setForm({ ...form, organiserCode: e.target.value })}
-              placeholder="Enter organiser secret code"
+              placeholder="Leave blank if registering as an attendee"
             />
-            <span className="field-hint">Leave blank to register as an attendee</span>
+            <span className="field-hint">Event hosts enter their secret organiser code here.</span>
           </div>
+
           {errors.form && <div className="form-error">{errors.form}</div>}
+
           <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create Account'}
+            {loading ? 'Creating Account...' : (<>Register <span className="btn-arrow">→</span></>)}
           </button>
         </form>
+
         <p className="auth-link">
-          Already have an account? <Link to="/login">Sign In</Link>
+          Already registered? <Link to="/login">Sign In</Link>
         </p>
       </div>
     </div>
   )
 }
-

@@ -115,8 +115,7 @@ export default function OrganizerDashboard() {
     try {
       await api.delete(`/meals/${mealToDelete._id}`)
       setMeals(meals.filter(m => m._id !== mealToDelete._id))
-      toast.success('Meal deleted')
-      // Refresh flags
+      toast.success('Meal removed')
       const flagsRes = await api.get(`/events/${eventId}/flags`)
       setFlags(flagsRes.data)
     } catch (err) {
@@ -154,8 +153,13 @@ export default function OrganizerDashboard() {
   if (!event) {
     return (
       <div className="empty-state">
-        <p>Event not found.</p>
-        <Link to="/" className="btn btn-primary">Back to Events</Link>
+        <div className="empty-state-icon" aria-hidden="true">
+          <span className="empty-emoji">🍽️</span>
+        </div>
+        <p className="empty-state-message">Event details not found.</p>
+        <Link to="/" className="btn btn-primary">
+          Back to Events <span className="btn-arrow">→</span>
+        </Link>
       </div>
     )
   }
@@ -183,63 +187,81 @@ export default function OrganizerDashboard() {
 
   return (
     <div>
-      <div style={{ marginBottom: '1.25rem' }}>
-        <Link to="/" style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-          ← Back to Events
+      <div className="breadcrumb-nav">
+        <Link to="/" className="back-link">
+          ← Back to All Events
         </Link>
       </div>
 
       <div className="page-header">
         <div>
-          <h1 className="page-title">{event.title}</h1>
+          <span className="eyebrow-label">Organiser Command Center</span>
+          <h1 className="page-title">
+            {event.title.toUpperCase()}
+          </h1>
           <p className="page-subtitle">
-            📅 {new Date(event.date).toLocaleDateString()} • 📍 {event.location}
+            📅 {new Date(event.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} • 📍 {event.location}
           </p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="tabs">
-        <button
-          className={`tab-btn ${activeTab === 'flags' ? 'active' : ''}`}
-          onClick={() => setActiveTab('flags')}
-        >
-          🚨 Allergy Flags {pendingCount > 0 && <span className="badge badge-pending" style={{ marginLeft: '0.375rem' }}>{pendingCount}</span>}
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'meals' ? 'active' : ''}`}
-          onClick={() => setActiveTab('meals')}
-        >
-          🍲 Meals ({meals.length})
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'attendees' ? 'active' : ''}`}
-          onClick={() => setActiveTab('attendees')}
-        >
-          👥 Attendees ({attendees.length})
-        </button>
+      {/* Pill-Style Tabs */}
+      <div className="tabs-container">
+        <div className="pill-tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'flags'}
+            className={`pill-tab-btn ${activeTab === 'flags' ? 'active' : ''}`}
+            onClick={() => setActiveTab('flags')}
+          >
+            🚨 ALLERGY FLAGS {pendingCount > 0 && <span className="pill-tab-counter">{pendingCount}</span>}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'meals'}
+            className={`pill-tab-btn ${activeTab === 'meals' ? 'active' : ''}`}
+            onClick={() => setActiveTab('meals')}
+          >
+            🍲 MEALS ({meals.length})
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'attendees'}
+            className={`pill-tab-btn ${activeTab === 'attendees' ? 'active' : ''}`}
+            onClick={() => setActiveTab('attendees')}
+          >
+            👥 ATTENDEES ({attendees.length})
+          </button>
+        </div>
       </div>
 
       {/* --- TAB 1: ALLERGY FLAGS --- */}
       {activeTab === 'flags' && (
-        <div>
-          {/* Prominent Disclaimer Banner */}
-          <div className="banner banner-warning">
-            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>⚠️</span>
-            <div>
-              <strong>IMPORTANT:</strong> Flags are automated suggestions based on synonym expansion and ingredient matching. A human must verify every meal before serving. The app never declares a meal safe.
+        <div className="tab-panel">
+          {/* Prominent Editorial Warning Banner */}
+          <div className="allergy-warning-banner">
+            <div className="banner-icon-badge" aria-hidden="true">⚠️</div>
+            <div className="banner-text-content">
+              <strong className="banner-title">HUMAN VERIFICATION REQUIRED:</strong>
+              <p className="banner-body">
+                Flags are automated suggestions based on synonym expansion and ingredient matching. A human must verify every meal before serving. The app never declares a meal safe.
+              </p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <label style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Status Filter:</label>
+          <div className="controls-bar">
+            <div className="filter-group">
+              <label htmlFor="flag-status-select" className="filter-label">Filter Status:</label>
               <select
+                id="flag-status-select"
                 value={flagFilter}
                 onChange={e => setFlagFilter(e.target.value)}
-                style={{ width: 'auto', padding: '0.4rem 0.6rem' }}
+                className="filter-select"
               >
-                <option value="all">All ({flags.length})</option>
+                <option value="all">All Flags ({flags.length})</option>
                 <option value="pending">Pending ({flags.filter(f => f.status === 'pending').length})</option>
                 <option value="verified">Verified ({flags.filter(f => f.status === 'verified').length})</option>
                 <option value="dismissed">Dismissed ({flags.filter(f => f.status === 'dismissed').length})</option>
@@ -247,19 +269,23 @@ export default function OrganizerDashboard() {
             </div>
 
             <button
+              type="button"
               className="btn btn-primary"
               onClick={handleRunCheck}
               disabled={runningCheck}
             >
-              {runningCheck ? 'Scanning...' : '🔄 Run Allergy Check'}
+              {runningCheck ? 'Scanning Menus...' : (<>🔄 Run Allergy Check <span className="btn-arrow">→</span></>)}
             </button>
           </div>
 
           {filteredFlags.length === 0 ? (
             <div className="empty-state">
-              <p>
+              <div className="empty-state-icon" aria-hidden="true">
+                <span className="empty-emoji">🛡️</span>
+              </div>
+              <p className="empty-state-message">
                 {flags.length === 0
-                  ? 'No allergy conflicts detected. Click "Run Allergy Check" to rescan.'
+                  ? 'No conflict flags recorded yet. Click "Run Allergy Check" to scan meals against attendee registrations.'
                   : 'No flags match the selected status filter.'}
               </p>
             </div>
@@ -268,32 +294,30 @@ export default function OrganizerDashboard() {
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Meal</th>
-                    <th>Attendee</th>
+                    <th>Meal Item</th>
+                    <th>Diner / Attendee</th>
                     <th>Declared Allergen</th>
                     <th>Matched Ingredient</th>
                     <th>Status</th>
-                    <th>Review Info</th>
+                    <th>Human Review</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredFlags.map(flag => (
                     <tr key={flag._id}>
-                      <td data-label="Meal">
-                        <strong>{flag.meal?.name || 'Unknown Meal'}</strong>
+                      <td data-label="Meal Item">
+                        <strong className="cell-primary-text">{flag.meal?.name || 'Unknown Meal'}</strong>
                       </td>
-                      <td data-label="Attendee">
-                        <div>{flag.registration?.user?.name || 'Unknown User'}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          {flag.registration?.user?.email}
-                        </div>
+                      <td data-label="Diner / Attendee">
+                        <div className="attendee-name">{flag.registration?.user?.name || 'Unknown User'}</div>
+                        <div className="attendee-email">{flag.registration?.user?.email}</div>
                       </td>
                       <td data-label="Declared Allergen">
                         <span className="chip chip-allergy">{flag.allergen}</span>
                       </td>
                       <td data-label="Matched Ingredient">
-                        <span style={{ fontWeight: 600, color: 'var(--danger)' }}>
+                        <span className="matched-ingredient-pill">
                           {flag.matchedIngredient}
                         </span>
                       </td>
@@ -302,43 +326,46 @@ export default function OrganizerDashboard() {
                           {flag.status}
                         </span>
                       </td>
-                      <td data-label="Review Info">
+                      <td data-label="Human Review">
                         {flag.reviewedBy ? (
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                            By {flag.reviewedBy.name}
-                            <br />
-                            {new Date(flag.reviewedAt).toLocaleDateString()} {new Date(flag.reviewedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          <div className="review-meta">
+                            <span className="reviewer-name">Reviewed by {flag.reviewedBy.name}</span>
+                            <span className="review-time">
+                              {new Date(flag.reviewedAt).toLocaleDateString()} at {new Date(flag.reviewedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
                           </div>
                         ) : (
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>—</span>
+                          <span className="unreviewed-dash">—</span>
                         )}
                       </td>
                       <td data-label="Actions">
-                        <div style={{ display: 'flex', gap: '0.375rem', justifyContent: 'flex-end' }}>
+                        <div className="table-actions-cell">
                           {flag.status !== 'verified' && (
                             <button
-                              className="btn btn-sm btn-success"
+                              type="button"
+                              className="btn btn-sm btn-green"
                               onClick={() => handleFlagStatus(flag._id, 'verified')}
-                              title="Mark verified by human"
+                              title="Mark verified by catering / human staff"
                             >
                               Verify
                             </button>
                           )}
                           {flag.status !== 'dismissed' && (
                             <button
+                              type="button"
                               className="btn btn-sm btn-secondary"
                               onClick={() => handleFlagStatus(flag._id, 'dismissed')}
-                              title="Dismiss flag"
+                              title="Dismiss flag after check"
                             >
                               Dismiss
                             </button>
                           )}
                           {flag.status !== 'pending' && (
                             <button
-                              className="btn btn-sm btn-secondary"
+                              type="button"
+                              className="btn btn-sm btn-ghost"
                               onClick={() => handleFlagStatus(flag._id, 'pending')}
-                              title="Reset to pending"
-                              style={{ fontSize: '0.75rem' }}
+                              title="Reset flag to pending"
                             >
                               Reset
                             </button>
@@ -356,37 +383,38 @@ export default function OrganizerDashboard() {
 
       {/* --- TAB 2: MEALS --- */}
       {activeTab === 'meals' && (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-              Add planned meals and their ingredients. Ingredients are automatically cross-checked against attendee allergy notes.
+        <div className="tab-panel">
+          <div className="section-toolbar">
+            <p className="toolbar-hint">
+              Define meals and list every ingredient. Changes automatically trigger a rescan against registered allergies.
             </p>
-            <button className="btn btn-primary" onClick={openAddMeal}>
-              + Add Meal
+            <button type="button" className="btn btn-primary" onClick={openAddMeal}>
+              + Add Meal <span className="btn-arrow">→</span>
             </button>
           </div>
 
           {meals.length === 0 ? (
             <div className="empty-state">
-              <p>No meals added for this event yet.</p>
-              <button className="btn btn-primary" onClick={openAddMeal}>
-                Add first meal
+              <div className="empty-state-icon" aria-hidden="true">
+                <span className="empty-emoji">🍲</span>
+              </div>
+              <p className="empty-state-message">No menu items created for this event yet.</p>
+              <button type="button" className="btn btn-primary" onClick={openAddMeal}>
+                Add first dish <span className="btn-arrow">→</span>
               </button>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="meals-stack">
               {meals.map(meal => (
-                <div key={meal._id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                  <div style={{ flex: 1, minWidth: '240px' }}>
-                    <h3 style={{ fontSize: '1.125rem', marginBottom: '0.25rem' }}>{meal.name}</h3>
+                <div key={meal._id} className="card meal-card">
+                  <div className="meal-card-main">
+                    <h3 className="meal-title">{meal.name}</h3>
                     {meal.description && (
-                      <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.75rem' }}>
-                        {meal.description}
-                      </p>
+                      <p className="meal-description">{meal.description}</p>
                     )}
-                    <div>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem', textTransform: 'uppercase' }}>
-                        Ingredients ({meal.ingredients?.length || 0}):
+                    <div className="meal-ingredients-wrapper">
+                      <span className="ingredients-label">
+                        Recorded Ingredients ({meal.ingredients?.length || 0}):
                       </span>
                       <div className="chip-list">
                         {meal.ingredients?.map((ing, i) => (
@@ -396,15 +424,17 @@ export default function OrganizerDashboard() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div className="meal-card-actions">
                     <button
+                      type="button"
                       className="btn btn-sm btn-secondary"
                       onClick={() => openEditMeal(meal)}
                     >
                       Edit
                     </button>
                     <button
-                      className="btn btn-sm btn-danger"
+                      type="button"
+                      className="btn btn-sm btn-ghost"
                       onClick={() => setMealToDelete(meal)}
                     >
                       Delete
@@ -419,32 +449,34 @@ export default function OrganizerDashboard() {
 
       {/* --- TAB 3: ATTENDEES --- */}
       {activeTab === 'attendees' && (
-        <div>
-          {/* Filters Bar */}
+        <div className="tab-panel">
           <div className="filters-bar">
             <input
               type="text"
-              placeholder="Search by attendee name or email..."
+              placeholder="Search by name or email..."
               value={attendeeSearch}
               onChange={e => setAttendeeSearch(e.target.value)}
-              style={{ maxWidth: '300px' }}
+              className="search-input"
             />
 
             <select
               value={allergyFilter}
               onChange={e => setAllergyFilter(e.target.value)}
-              style={{ maxWidth: '200px' }}
+              className="filter-select"
             >
-              <option value="all">All Allergies</option>
+              <option value="all">All Declared Allergies</option>
               {allUniqueAllergies.map(a => (
-                <option key={a} value={a}>{a}</option>
+                <option key={a} value={a}>{a.toUpperCase()}</option>
               ))}
             </select>
           </div>
 
           {filteredAttendees.length === 0 ? (
             <div className="empty-state">
-              <p>No attendee registrations found matching the filters.</p>
+              <div className="empty-state-icon" aria-hidden="true">
+                <span className="empty-emoji">👥</span>
+              </div>
+              <p className="empty-state-message">No attendee records match your filter criteria.</p>
             </div>
           ) : (
             <div className="table-wrapper responsive-table">
@@ -453,25 +485,23 @@ export default function OrganizerDashboard() {
                   <tr>
                     <th>Attendee</th>
                     <th>Dietary Preference</th>
-                    <th>Allergies</th>
-                    <th>Allergy Note</th>
+                    <th>Declared Allergies</th>
+                    <th>Personal Note</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredAttendees.map(att => (
                     <tr key={att._id}>
                       <td data-label="Attendee">
-                        <strong>{att.user?.name || 'Attendee'}</strong>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          {att.user?.email}
-                        </div>
+                        <strong className="cell-primary-text">{att.user?.name || 'Attendee'}</strong>
+                        <div className="attendee-email">{att.user?.email}</div>
                       </td>
                       <td data-label="Dietary Preference">
                         <span className="badge badge-pref">
                           {att.dietaryPreference || 'none'}
                         </span>
                       </td>
-                      <td data-label="Allergies">
+                      <td data-label="Declared Allergies">
                         {att.allergies && att.allergies.length > 0 ? (
                           <div className="chip-list">
                             {att.allergies.map(a => (
@@ -479,14 +509,14 @@ export default function OrganizerDashboard() {
                             ))}
                           </div>
                         ) : (
-                          <span style={{ color: 'var(--text-muted)', fontSize: '0.8125rem' }}>None declared</span>
+                          <span className="text-subtle">None declared</span>
                         )}
                       </td>
-                      <td data-label="Allergy Note" style={{ maxWidth: '300px' }}>
+                      <td data-label="Personal Note">
                         {att.note ? (
-                          <span style={{ fontSize: '0.8125rem' }}>{att.note}</span>
+                          <span className="attendee-note-text">{att.note}</span>
                         ) : (
-                          <span style={{ color: 'var(--text-muted)', fontSize: '0.8125rem' }}>—</span>
+                          <span className="text-subtle">—</span>
                         )}
                       </td>
                     </tr>
@@ -498,11 +528,12 @@ export default function OrganizerDashboard() {
         </div>
       )}
 
-      {/* Meal Modal */}
+      {/* Add / Edit Meal Modal */}
       {mealModalOpen && (
         <div className="modal-overlay" onClick={() => setMealModalOpen(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h3>{editingMeal ? 'Edit Meal' : 'Add Meal'}</h3>
+            <span className="eyebrow-label">{editingMeal ? 'Modify Dish' : 'New Dish'}</span>
+            <h3>{editingMeal ? 'Edit Meal Details' : 'Add Menu Item'}</h3>
             <form onSubmit={handleSaveMeal} noValidate>
               <div className="form-group">
                 <label htmlFor="meal-name">Meal Name</label>
@@ -525,25 +556,25 @@ export default function OrganizerDashboard() {
                   rows={2}
                   value={mealForm.description}
                   onChange={e => setMealForm({ ...mealForm, description: e.target.value })}
-                  placeholder="Brief description of the dish..."
+                  placeholder="Culinary notes, sides, or presentation details..."
                 />
               </div>
 
               <div className="form-group">
-                <label>Ingredients (press Enter or comma to add)</label>
+                <label>Ingredients (Type & press Enter or comma)</label>
                 <ChipInput
                   value={mealForm.ingredients}
                   onChange={ings => setMealForm({ ...mealForm, ingredients: ings })}
                   placeholder="e.g. paneer, butter, tomato, cashew"
-                  suggestions={['paneer', 'butter', 'milk', 'cream', 'wheat flour', 'egg', 'peanut', 'cashew', 'soy sauce', 'tofu']}
+                  suggestions={['paneer', 'butter', 'milk', 'cream', 'wheat flour', 'egg', 'peanut', 'cashew', 'soy sauce', 'tofu', 'sesame oil']}
                 />
                 <span className="field-hint">
-                  Include all key ingredients so the conflict check can spot potential allergens.
+                  Include every component so the engine can scan against attendee allergies.
                 </span>
                 {mealErrors.ingredients && <span className="field-error">{mealErrors.ingredients}</span>}
               </div>
 
-              <div className="modal-actions" style={{ marginTop: '1.5rem' }}>
+              <div className="modal-actions">
                 <button
                   type="button"
                   className="btn btn-secondary"
@@ -557,7 +588,7 @@ export default function OrganizerDashboard() {
                   className="btn btn-primary"
                   disabled={mealSubmitting}
                 >
-                  {mealSubmitting ? 'Saving...' : (editingMeal ? 'Update Meal' : 'Add Meal')}
+                  {mealSubmitting ? 'Saving...' : (<>{editingMeal ? 'Update Meal' : 'Add Meal'} <span className="btn-arrow">→</span></>)}
                 </button>
               </div>
             </form>
@@ -568,12 +599,11 @@ export default function OrganizerDashboard() {
       {/* Delete Meal Confirm */}
       <ConfirmDialog
         open={Boolean(mealToDelete)}
-        title="Delete Meal"
-        message={`Are you sure you want to delete "${mealToDelete?.name}"? Any associated flags will also be removed.`}
+        title="Delete Menu Item"
+        message={`Are you sure you want to delete "${mealToDelete?.name}"? Any associated conflict flags will also be cleaned up.`}
         onConfirm={handleDeleteMeal}
         onCancel={() => setMealToDelete(null)}
       />
     </div>
   )
 }
-

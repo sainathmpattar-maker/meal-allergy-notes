@@ -3,15 +3,17 @@ import { Link } from 'react-router-dom'
 
 export default function NotFound() {
   return (
-    <div className="empty-state" style={{ marginTop: '4rem', padding: '3rem' }}>
-      <h1 style={{ fontSize: '3rem', marginBottom: '0.5rem', color: 'var(--text)' }}>404</h1>
-      <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem', color: 'var(--text-muted)' }}>
-        Page not found
-      </p>
-      <Link to="/" className="btn btn-primary">
-        Return to Events
+    <div className="empty-state not-found-state">
+      <div className="empty-state-icon" aria-hidden="true">
+        <span className="empty-emoji">🍽️</span>
+        <span className="empty-fork">❓</span>
+      </div>
+      <h1 className="not-found-code">404</h1>
+      <p className="not-found-title">Page Not Found</p>
+      <p className="empty-state-message">The table you are looking for has not been set.</p>
+      <Link to="/" className="btn btn-primary" style={{ marginTop: '1.5rem' }}>
+        Return to Events <span className="btn-arrow">→</span>
       </Link>
     </div>
   )
 }
-

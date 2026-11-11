@@ -41,7 +41,6 @@ export default function AttendeeEventPage() {
       setEvent(evRes.data)
       setMeals(mealsRes.data)
 
-      // regRes.data is an array (only containing the user's own registration)
       if (regRes.data && regRes.data.length > 0) {
         const myReg = regRes.data[0]
         setRegistration(myReg)
@@ -71,7 +70,7 @@ export default function AttendeeEventPage() {
       }
       const { data } = await api.post(`/events/${eventId}/registrations`, payload)
       setRegistration(data)
-      toast.success('Your meal preferences have been saved!')
+      toast.success('Your meal preferences have been recorded!')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to save preferences')
     } finally {
@@ -86,9 +85,9 @@ export default function AttendeeEventPage() {
       setDietaryPreference('none')
       setAllergies([])
       setNote('')
-      toast.success('Registration removed')
+      toast.success('Preferences cleared')
     } catch (err) {
-      toast.error('Failed to remove registration')
+      toast.error('Failed to remove preferences')
     } finally {
       setConfirmDelete(false)
     }
@@ -104,38 +103,55 @@ export default function AttendeeEventPage() {
   if (!event) {
     return (
       <div className="empty-state">
-        <p>Event not found.</p>
-        <Link to="/" className="btn btn-primary">Back to Events</Link>
+        <div className="empty-state-icon" aria-hidden="true">
+          <span className="empty-emoji">🍽️</span>
+        </div>
+        <p className="empty-state-message">Event could not be located.</p>
+        <Link to="/" className="btn btn-primary">
+          Return to Events <span className="btn-arrow">→</span>
+        </Link>
       </div>
     )
   }
 
   return (
     <div>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <Link to="/" style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-          ← Back to Events
+      <div className="breadcrumb-nav">
+        <Link to="/" className="back-link">
+          ← Back to All Events
         </Link>
       </div>
 
-      {/* Event summary banner */}
-      <div className="card" style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>{event.title}</h1>
-        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', color: 'var(--text-muted)', fontSize: '0.9375rem' }}>
-          <span>📅 {new Date(event.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-          <span>📍 {event.location}</span>
+      {/* Event Header Hero */}
+      <div className="event-hero-card">
+        <div className="hero-content">
+          <span className="eyebrow-label">Registered Gathering</span>
+          <h1 className="hero-title">{event.title}</h1>
+          <div className="hero-meta">
+            <span className="meta-pill">
+              📅 {new Date(event.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            </span>
+            <span className="meta-pill">
+              📍 {event.location}
+            </span>
+          </div>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '2rem' }}>
+      <div className="two-column-layout">
         {/* Left Column: Preferences Form */}
-        <div className="card">
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>My Meal Preferences</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-            {registration
-              ? 'Your preferences are recorded. You can update them at any time.'
-              : 'Please declare your dietary preferences and any allergies below.'}
-          </p>
+        <div className="card form-card">
+          <div className="card-header">
+            <span className="eyebrow-label">Individual Needs</span>
+            <h2 className="card-heading">
+              YOUR <span className="word-accent">PREFERENCES.</span>
+            </h2>
+            <p className="card-description">
+              {registration
+                ? 'Your dietary specifications are on file. You may update them anytime.'
+                : 'Declare your dietary preferences and allergens for safe meal planning.'}
+            </p>
+          </div>
 
           <form onSubmit={handleSavePreferences}>
             <div className="form-group">
@@ -145,12 +161,12 @@ export default function AttendeeEventPage() {
                 value={dietaryPreference}
                 onChange={e => setDietaryPreference(e.target.value)}
               >
-                <option value="none">None / Standard</option>
+                <option value="none">None / Standard Dining</option>
                 <option value="vegetarian">Vegetarian</option>
                 <option value="vegan">Vegan</option>
                 <option value="halal">Halal</option>
                 <option value="jain">Jain</option>
-                <option value="other">Other</option>
+                <option value="other">Other Preference</option>
               </select>
             </div>
 
@@ -159,12 +175,10 @@ export default function AttendeeEventPage() {
               <ChipInput
                 value={allergies}
                 onChange={setAllergies}
-                placeholder="Type an allergy and press Enter (e.g. peanut, dairy)"
+                placeholder="Type allergy and press Enter (e.g. peanut, dairy)"
                 suggestions={COMMON_ALLERGENS}
               />
-              <span className="field-hint">
-                Quick add common allergens:
-              </span>
+              <span className="field-hint">Click to quickly add recognized allergens:</span>
               <div className="quick-pills">
                 {COMMON_ALLERGENS.map(a => (
                   <button
@@ -173,7 +187,7 @@ export default function AttendeeEventPage() {
                     className="quick-pill"
                     onClick={() => addCommonAllergen(a)}
                     disabled={allergies.includes(a)}
-                    style={{ opacity: allergies.includes(a) ? 0.4 : 1 }}
+                    aria-pressed={allergies.includes(a)}
                   >
                     + {a}
                   </button>
@@ -182,8 +196,8 @@ export default function AttendeeEventPage() {
             </div>
 
             <div className="form-group">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label htmlFor="allergy-note">Additional Allergy Notes</label>
+              <div className="textarea-label-row">
+                <label htmlFor="allergy-note">Detailed Allergy Notes</label>
                 <span className="char-counter">{note.length} / 500</span>
               </div>
               <textarea
@@ -192,62 +206,59 @@ export default function AttendeeEventPage() {
                 value={note}
                 maxLength={500}
                 onChange={e => setNote(e.target.value)}
-                placeholder="Provide details about severity, cross-contamination concerns, or EpiPen availability..."
+                placeholder="E.g., severity of reaction, cross-contact restrictions, or EpiPen carrying status..."
               />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', gap: '0.5rem' }}>
+            <div className="form-actions-row">
               <button
                 type="submit"
                 className="btn btn-primary"
                 disabled={saving}
               >
-                {saving ? 'Saving...' : (registration ? 'Update Preferences' : 'Save Preferences')}
+                {saving ? 'Saving...' : (<>{registration ? 'Update Preferences' : 'Save Preferences'} <span className="btn-arrow">→</span></>)}
               </button>
 
               {registration && (
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="btn btn-ghost"
                   onClick={() => setConfirmDelete(true)}
-                  style={{ color: 'var(--danger)' }}
                 >
-                  Delete Preferences
+                  Clear Entry
                 </button>
               )}
             </div>
           </form>
         </div>
 
-        {/* Right Column: Event Meals List (names and descriptions only, no attendee data) */}
+        {/* Right Column: Event Meals List */}
         <div>
-          <div className="card">
-            <h2 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>Event Menu</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
-              Planned meals for this event. Automated conflict checks will flag any ingredients matching your declared allergies for human organiser review.
-            </p>
+          <div className="card menu-card">
+            <div className="card-header">
+              <span className="eyebrow-label">Catering Preview</span>
+              <h2 className="card-heading">
+                PLANNED <span className="word-accent">MENU.</span>
+              </h2>
+              <p className="card-description">
+                Meals scheduled for this event. Automated conflict scans flag ingredients matching your allergens for human organiser review.
+              </p>
+            </div>
 
             {meals.length === 0 ? (
-              <div className="empty-state" style={{ padding: '1.5rem' }}>
-                <p>The organiser hasn't added meals for this event yet.</p>
+              <div className="empty-state compact-empty">
+                <div className="empty-state-icon" aria-hidden="true">
+                  <span className="empty-emoji">🍲</span>
+                </div>
+                <p className="empty-state-message">The organiser has not yet posted the menu for this event.</p>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div className="menu-list">
                 {meals.map(meal => (
-                  <div
-                    key={meal._id}
-                    style={{
-                      padding: '0.875rem',
-                      borderRadius: 'var(--radius)',
-                      border: '1px solid var(--border)',
-                      background: '#fff',
-                    }}
-                  >
-                    <div style={{ fontWeight: 600, fontSize: '0.9375rem', color: 'var(--text)' }}>
-                      {meal.name}
-                    </div>
+                  <div key={meal._id} className="menu-item-card">
+                    <div className="menu-item-name">{meal.name}</div>
                     {meal.description && (
-                      <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                      <p className="menu-item-description">
                         {meal.description}
                       </p>
                     )}
@@ -261,12 +272,11 @@ export default function AttendeeEventPage() {
 
       <ConfirmDialog
         open={confirmDelete}
-        title="Delete Preferences"
-        message="Are you sure you want to remove your meal preferences for this event?"
+        title="Clear Preferences"
+        message="Are you sure you want to remove your declared meal preferences for this event?"
         onConfirm={handleDeleteRegistration}
         onCancel={() => setConfirmDelete(false)}
       />
     </div>
   )
 }
-

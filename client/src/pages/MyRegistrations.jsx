@@ -20,61 +20,69 @@ export default function MyRegistrations() {
     <div>
       <div className="page-header">
         <div>
-          <h1 className="page-title">My Event Registrations</h1>
-          <p className="page-subtitle">Events you've submitted dietary preferences and allergy notes for.</p>
+          <span className="eyebrow-label">Diner Records</span>
+          <h1 className="page-title">
+            MY <span className="word-accent">REGISTRATIONS.</span>
+          </h1>
+          <p className="page-subtitle">Events where your meal preferences and allergy alerts are filed.</p>
         </div>
       </div>
 
       {registrations.length === 0 ? (
         <div className="empty-state">
-          <p>You haven't submitted preferences for any events yet.</p>
-          <Link to="/" className="btn btn-primary">Browse Events</Link>
+          <div className="empty-state-icon" aria-hidden="true">
+            <span className="empty-emoji">🍽️</span>
+            <span className="empty-fork">🍴</span>
+          </div>
+          <p className="empty-state-message">You have not registered meal preferences for any events yet.</p>
+          <Link to="/" className="btn btn-primary">
+            Browse Events <span className="btn-arrow">→</span>
+          </Link>
         </div>
       ) : (
         <div className="card-grid">
           {registrations.map(reg => (
-            <div key={reg._id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+            <div key={reg._id} className="card registration-card">
+              <div className="reg-card-content">
+                <span className="event-date-chip">
+                  📅 {reg.event?.date ? new Date(reg.event.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'Date TBD'}
+                </span>
+                <h3 className="event-card-title">
                   {reg.event?.title || 'Event'}
                 </h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.75rem' }}>
-                  📅 {reg.event?.date ? new Date(reg.event.date).toLocaleDateString() : ''} • 📍 {reg.event?.location || ''}
+                <p className="event-card-location">
+                  📍 {reg.event?.location || 'Location TBD'}
                 </p>
 
-                <div style={{ marginBottom: '0.5rem' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>
-                    DIETARY PREFERENCE:
-                  </span>
+                <div className="reg-attribute-section">
+                  <span className="attribute-label">DIETARY PREFERENCE:</span>
                   <span className="badge badge-pref">{reg.dietaryPreference || 'none'}</span>
                 </div>
 
-                <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>
-                    DECLARED ALLERGIES:
-                  </span>
+                <div className="reg-attribute-section">
+                  <span className="attribute-label">DECLARED ALLERGIES:</span>
                   {reg.allergies && reg.allergies.length > 0 ? (
                     <div className="chip-list">
-                      {reg.allergies.map(a => <span key={a} className="chip chip-allergy">{a}</span>)}
+                      {reg.allergies.map(a => (
+                        <span key={a} className="chip chip-allergy">{a}</span>
+                      ))}
                     </div>
                   ) : (
-                    <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>None declared</span>
+                    <span className="text-subtle">None declared</span>
                   )}
                 </div>
 
                 {reg.note && (
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>
-                      NOTE:
-                    </span>
-                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>{reg.note}</p>
+                  <div className="reg-attribute-section">
+                    <span className="attribute-label">PERSONAL NOTE:</span>
+                    <p className="reg-note-text">{reg.note}</p>
                   </div>
                 )}
               </div>
 
-              <div style={{ marginTop: '1.25rem' }}>
+              <div className="reg-card-footer">
                 <Link to={`/events/${reg.event?._id}`} className="btn btn-sm btn-primary">
-                  Edit Preferences →
+                  Edit Preferences <span className="btn-arrow">→</span>
                 </Link>
               </div>
             </div>
@@ -84,4 +92,3 @@ export default function MyRegistrations() {
     </div>
   )
 }
-
