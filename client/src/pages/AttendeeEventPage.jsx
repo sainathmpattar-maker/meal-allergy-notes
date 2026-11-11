@@ -5,6 +5,8 @@ import { useToast } from '../components/Toast'
 import LoadingSpinner from '../components/LoadingSpinner'
 import ChipInput from '../components/ChipInput'
 import ConfirmDialog from '../components/ConfirmDialog'
+import Reveal from '../components/Reveal'
+import RotatingSticker from '../components/RotatingSticker'
 import api from '../api/axios'
 
 const COMMON_ALLERGENS = [
@@ -123,150 +125,167 @@ export default function AttendeeEventPage() {
       </div>
 
       {/* Event Header Hero */}
-      <div className="event-hero-card">
-        <div className="hero-content">
-          <span className="eyebrow-label">Registered Gathering</span>
-          <h1 className="hero-title">{event.title}</h1>
-          <div className="hero-meta">
-            <span className="meta-pill">
-              📅 {new Date(event.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-            </span>
-            <span className="meta-pill">
-              📍 {event.location}
-            </span>
+      <Reveal>
+        <div className="event-hero-card">
+          <div className="hero-content">
+            <span className="eyebrow-label">Registered Gathering</span>
+            <div className="heading-mask">
+              <h1 className="hero-title animated-heading">{event.title}</h1>
+            </div>
+            <div className="hero-meta">
+              <span className="meta-pill">
+                📅 {new Date(event.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </span>
+              <span className="meta-pill">
+                📍 {event.location}
+              </span>
+            </div>
+          </div>
+          <div className="hero-badge-slot">
+            <RotatingSticker size={100} />
           </div>
         </div>
-      </div>
+      </Reveal>
 
       <div className="two-column-layout">
         {/* Left Column: Preferences Form */}
-        <div className="card form-card">
-          <div className="card-header">
-            <span className="eyebrow-label">Individual Needs</span>
-            <h2 className="card-heading">
-              YOUR <span className="word-accent">PREFERENCES.</span>
-            </h2>
-            <p className="card-description">
-              {registration
-                ? 'Your dietary specifications are on file. You may update them anytime.'
-                : 'Declare your dietary preferences and allergens for safe meal planning.'}
-            </p>
-          </div>
-
-          <form onSubmit={handleSavePreferences}>
-            <div className="form-group">
-              <label htmlFor="dietary-preference">Dietary Preference</label>
-              <select
-                id="dietary-preference"
-                value={dietaryPreference}
-                onChange={e => setDietaryPreference(e.target.value)}
-              >
-                <option value="none">None / Standard Dining</option>
-                <option value="vegetarian">Vegetarian</option>
-                <option value="vegan">Vegan</option>
-                <option value="halal">Halal</option>
-                <option value="jain">Jain</option>
-                <option value="other">Other Preference</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Allergies & Intolerances</label>
-              <ChipInput
-                value={allergies}
-                onChange={setAllergies}
-                placeholder="Type allergy and press Enter (e.g. peanut, dairy)"
-                suggestions={COMMON_ALLERGENS}
-              />
-              <span className="field-hint">Click to quickly add recognized allergens:</span>
-              <div className="quick-pills">
-                {COMMON_ALLERGENS.map(a => (
-                  <button
-                    key={a}
-                    type="button"
-                    className="quick-pill"
-                    onClick={() => addCommonAllergen(a)}
-                    disabled={allergies.includes(a)}
-                    aria-pressed={allergies.includes(a)}
-                  >
-                    + {a}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="form-group">
-              <div className="textarea-label-row">
-                <label htmlFor="allergy-note">Detailed Allergy Notes</label>
-                <span className="char-counter">{note.length} / 500</span>
-              </div>
-              <textarea
-                id="allergy-note"
-                rows={4}
-                value={note}
-                maxLength={500}
-                onChange={e => setNote(e.target.value)}
-                placeholder="E.g., severity of reaction, cross-contact restrictions, or EpiPen carrying status..."
-              />
-            </div>
-
-            <div className="form-actions-row">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={saving}
-              >
-                {saving ? 'Saving...' : (<>{registration ? 'Update Preferences' : 'Save Preferences'} <span className="btn-arrow">→</span></>)}
-              </button>
-
-              {registration && (
-                <button
-                  type="button"
-                  className="btn btn-ghost"
-                  onClick={() => setConfirmDelete(true)}
-                >
-                  Clear Entry
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-
-        {/* Right Column: Event Meals List */}
-        <div>
-          <div className="card menu-card">
+        <Reveal delay={100}>
+          <div className="card form-card">
             <div className="card-header">
-              <span className="eyebrow-label">Catering Preview</span>
-              <h2 className="card-heading">
-                PLANNED <span className="word-accent">MENU.</span>
-              </h2>
+              <span className="eyebrow-label">Individual Needs</span>
+              <div className="heading-mask">
+                <h2 className="card-heading animated-heading">
+                  YOUR <span className="word-accent highlight-swipe">PREFERENCES.</span>
+                </h2>
+              </div>
               <p className="card-description">
-                Meals scheduled for this event. Automated conflict scans flag ingredients matching your allergens for human organiser review.
+                {registration
+                  ? 'Your dietary specifications are on file. You may update them anytime.'
+                  : 'Declare your dietary preferences and allergens for safe meal planning.'}
               </p>
             </div>
 
-            {meals.length === 0 ? (
-              <div className="empty-state compact-empty">
-                <div className="empty-state-icon" aria-hidden="true">
-                  <span className="empty-emoji">🍲</span>
+            <form onSubmit={handleSavePreferences}>
+              <div className="form-group">
+                <label htmlFor="dietary-preference">Dietary Preference</label>
+                <select
+                  id="dietary-preference"
+                  value={dietaryPreference}
+                  onChange={e => setDietaryPreference(e.target.value)}
+                >
+                  <option value="none">None / Standard Dining</option>
+                  <option value="vegetarian">Vegetarian</option>
+                  <option value="vegan">Vegan</option>
+                  <option value="halal">Halal</option>
+                  <option value="jain">Jain</option>
+                  <option value="other">Other Preference</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Allergies & Intolerances</label>
+                <ChipInput
+                  value={allergies}
+                  onChange={setAllergies}
+                  placeholder="Type allergy and press Enter (e.g. peanut, dairy)"
+                  suggestions={COMMON_ALLERGENS}
+                />
+                <span className="field-hint">Click to quickly add recognized allergens:</span>
+                <div className="quick-pills">
+                  {COMMON_ALLERGENS.map(a => (
+                    <button
+                      key={a}
+                      type="button"
+                      className="quick-pill"
+                      onClick={() => addCommonAllergen(a)}
+                      disabled={allergies.includes(a)}
+                      aria-pressed={allergies.includes(a)}
+                    >
+                      + {a}
+                    </button>
+                  ))}
                 </div>
-                <p className="empty-state-message">The organiser has not yet posted the menu for this event.</p>
               </div>
-            ) : (
-              <div className="menu-list">
-                {meals.map(meal => (
-                  <div key={meal._id} className="menu-item-card">
-                    <div className="menu-item-name">{meal.name}</div>
-                    {meal.description && (
-                      <p className="menu-item-description">
-                        {meal.description}
-                      </p>
-                    )}
-                  </div>
-                ))}
+
+              <div className="form-group">
+                <div className="textarea-label-row">
+                  <label htmlFor="allergy-note">Detailed Allergy Notes</label>
+                  <span className="char-counter">{note.length} / 500</span>
+                </div>
+                <textarea
+                  id="allergy-note"
+                  rows={4}
+                  value={note}
+                  maxLength={500}
+                  onChange={e => setNote(e.target.value)}
+                  placeholder="E.g., severity of reaction, cross-contact restrictions, or EpiPen carrying status..."
+                />
               </div>
-            )}
+
+              <div className="form-actions-row">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={saving}
+                >
+                  {saving ? 'Saving...' : (<>{registration ? 'Update Preferences' : 'Save Preferences'} <span className="btn-arrow">→</span></>)}
+                </button>
+
+                {registration && (
+                  <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={() => setConfirmDelete(true)}
+                  >
+                    Clear Entry
+                  </button>
+                )}
+              </div>
+            </form>
           </div>
+        </Reveal>
+
+        {/* Right Column: Event Meals List */}
+        <div>
+          <Reveal delay={200}>
+            <div className="card menu-card">
+              <div className="card-header">
+                <span className="eyebrow-label">Catering Preview</span>
+                <div className="heading-mask">
+                  <h2 className="card-heading animated-heading">
+                    PLANNED <span className="word-accent highlight-swipe">MENU.</span>
+                  </h2>
+                </div>
+                <p className="card-description">
+                  Meals scheduled for this event. Automated conflict scans flag ingredients matching your allergens for human organiser review.
+                </p>
+              </div>
+
+              {meals.length === 0 ? (
+                <div className="empty-state compact-empty">
+                  <div className="empty-state-icon" aria-hidden="true">
+                    <span className="empty-emoji">🍲</span>
+                  </div>
+                  <p className="empty-state-message">The organiser has not yet posted the menu for this event.</p>
+                </div>
+              ) : (
+                <div className="menu-list">
+                  {meals.map((meal, index) => (
+                    <Reveal key={meal._id} delay={index * 60}>
+                      <div className="menu-item-card">
+                        <div className="menu-item-name">{meal.name}</div>
+                        {meal.description && (
+                          <p className="menu-item-description">
+                            {meal.description}
+                          </p>
+                        )}
+                      </div>
+                    </Reveal>
+                  ))}
+                </div>
+              )}
+            </div>
+          </Reveal>
         </div>
       </div>
 

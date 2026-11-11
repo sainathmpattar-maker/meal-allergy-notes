@@ -55,7 +55,11 @@ export default function Register() {
       <div className="auth-card">
         <div className="auth-header">
           <span className="eyebrow-label">Join The Table</span>
-          <h1 className="page-title">CREATE <span className="word-accent">ACCOUNT.</span></h1>
+          <div className="heading-mask">
+            <h1 className="page-title animated-heading">
+              CREATE <span className="word-accent highlight-swipe">ACCOUNT.</span>
+            </h1>
+          </div>
           <p className="auth-tagline">Register to submit preferences or coordinate event menus.</p>
         </div>
 

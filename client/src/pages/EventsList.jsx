@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../components/Toast'
 import LoadingSpinner from '../components/LoadingSpinner'
 import ConfirmDialog from '../components/ConfirmDialog'
+import Reveal from '../components/Reveal'
+import RotatingSticker from '../components/RotatingSticker'
 import api from '../api/axios'
 
 export default function EventsList() {
@@ -112,87 +114,98 @@ export default function EventsList() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
+      <div className="page-header page-header-with-badge">
+        <div className="header-text-block">
           <span className="eyebrow-label">Coordination Hub</span>
-          <h1 className="page-title">
-            SCHEDULED <span className="word-accent">EVENTS.</span>
-          </h1>
+          <div className="heading-mask">
+            <h1 className="page-title animated-heading">
+              SCHEDULED <span className="word-accent highlight-swipe">EVENTS.</span>
+            </h1>
+          </div>
           <p className="page-subtitle">
             {isOrganiser
               ? 'Organise menus, manage registered diners, and audit automated allergy flags.'
               : 'Select an event to submit your dietary requirements and allergy notes.'}
           </p>
         </div>
-        {isOrganiser && (
-          <button className="btn btn-primary" onClick={openCreateModal}>
-            + Create Event <span className="btn-arrow">→</span>
-          </button>
-        )}
-      </div>
 
-      {events.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon" aria-hidden="true">
-            <span className="empty-emoji">🍽️</span>
-            <span className="empty-fork">🍴</span>
-          </div>
-          <p className="empty-state-message">No upcoming events found on the schedule.</p>
+        <div className="header-actions-block">
+          {/* Rotating Circular Sticker Badge */}
+          <RotatingSticker size={104} className="header-rotating-badge" />
+
           {isOrganiser && (
             <button className="btn btn-primary" onClick={openCreateModal}>
-              Create your first event <span className="btn-arrow">→</span>
+              + Create Event <span className="btn-arrow">→</span>
             </button>
           )}
         </div>
+      </div>
+
+      {events.length === 0 ? (
+        <Reveal>
+          <div className="empty-state">
+            <div className="empty-state-icon" aria-hidden="true">
+              <span className="empty-emoji">🍽️</span>
+              <span className="empty-fork">🍴</span>
+            </div>
+            <p className="empty-state-message">No upcoming events found on the schedule.</p>
+            {isOrganiser && (
+              <button className="btn btn-primary" onClick={openCreateModal}>
+                Create your first event <span className="btn-arrow">→</span>
+              </button>
+            )}
+          </div>
+        </Reveal>
       ) : (
         <div className="card-grid">
-          {events.map(ev => (
-            <div
-              key={ev._id}
-              className="card card-interactive"
-              onClick={() => handleCardClick(ev._id)}
-            >
-              <div className="event-card-header">
-                <span className="event-date-chip">
-                  📅 {new Date(ev.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
-                </span>
-                <h3 className="event-card-title">{ev.title}</h3>
-                <p className="event-card-location">
-                  📍 {ev.location}
-                </p>
-              </div>
+          {events.map((ev, index) => (
+            <Reveal key={ev._id} delay={index * 60}>
+              <div
+                className="card card-interactive"
+                onClick={() => handleCardClick(ev._id)}
+              >
+                <div className="event-card-header">
+                  <span className="event-date-chip">
+                    📅 {new Date(ev.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                  <h3 className="event-card-title">{ev.title}</h3>
+                  <p className="event-card-location">
+                    📍 {ev.location}
+                  </p>
+                </div>
 
-              <div className="event-card-footer">
-                <span className="event-card-cta">
-                  {isOrganiser ? 'Open Dashboard' : 'Set Preferences'}{' '}
-                  <span className="cta-arrow">→</span>
-                </span>
+                <div className="event-card-footer">
+                  <span className="event-card-cta">
+                    {isOrganiser ? 'Open Dashboard' : 'Set Preferences'}{' '}
+                    <span className="cta-arrow">→</span>
+                  </span>
 
-                {isOrganiser && (
-                  <div className="event-card-actions" onClick={e => e.stopPropagation()}>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-secondary"
-                      onClick={(e) => openEditModal(e, ev)}
-                      title="Edit Event"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setDeleteTarget(ev)
-                      }}
-                      title="Delete Event"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
+                  {isOrganiser && (
+                    <div className="event-card-actions" onClick={e => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-secondary"
+                        onClick={(e) => openEditModal(e, ev)}
+                        title="Edit Event"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-ghost"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setDeleteTarget(ev)
+                        }}
+                        title="Delete Event"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       )}

@@ -5,6 +5,7 @@ import { useToast } from '../components/Toast'
 import LoadingSpinner from '../components/LoadingSpinner'
 import ChipInput from '../components/ChipInput'
 import ConfirmDialog from '../components/ConfirmDialog'
+import Reveal from '../components/Reveal'
 import api from '../api/axios'
 
 export default function OrganizerDashboard() {
@@ -100,7 +101,6 @@ export default function OrganizerDashboard() {
         toast.success('Meal created and allergy check re-run')
       }
       setMealModalOpen(false)
-      // Refresh flags as rescan occurred
       const flagsRes = await api.get(`/events/${eventId}/flags`)
       setFlags(flagsRes.data)
     } catch (err) {
@@ -196,16 +196,18 @@ export default function OrganizerDashboard() {
       <div className="page-header">
         <div>
           <span className="eyebrow-label">Organiser Command Center</span>
-          <h1 className="page-title">
-            {event.title.toUpperCase()}
-          </h1>
+          <div className="heading-mask">
+            <h1 className="page-title animated-heading">
+              {event.title.toUpperCase()}
+            </h1>
+          </div>
           <p className="page-subtitle">
             📅 {new Date(event.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} • 📍 {event.location}
           </p>
         </div>
       </div>
 
-      {/* Pill-Style Tabs */}
+      {/* Pill-Style Tabs with animated cross-fade panel */}
       <div className="tabs-container">
         <div className="pill-tabs" role="tablist">
           <button
@@ -240,7 +242,7 @@ export default function OrganizerDashboard() {
 
       {/* --- TAB 1: ALLERGY FLAGS --- */}
       {activeTab === 'flags' && (
-        <div className="tab-panel">
+        <div key="flags-tab" className="tab-panel tab-crossfade">
           {/* Prominent Editorial Warning Banner */}
           <div className="allergy-warning-banner">
             <div className="banner-icon-badge" aria-hidden="true">⚠️</div>
@@ -304,8 +306,12 @@ export default function OrganizerDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredFlags.map(flag => (
-                    <tr key={flag._id}>
+                  {filteredFlags.map((flag, index) => (
+                    <tr
+                      key={flag._id}
+                      className="flag-row-animated"
+                      style={{ animationDelay: `${Math.min(index * 45, 600)}ms` }}
+                    >
                       <td data-label="Meal Item">
                         <strong className="cell-primary-text">{flag.meal?.name || 'Unknown Meal'}</strong>
                       </td>
@@ -322,7 +328,7 @@ export default function OrganizerDashboard() {
                         </span>
                       </td>
                       <td data-label="Status">
-                        <span className={`badge badge-${flag.status}`}>
+                        <span className={`badge badge-${flag.status} badge-status-animated`}>
                           {flag.status}
                         </span>
                       </td>
@@ -383,7 +389,7 @@ export default function OrganizerDashboard() {
 
       {/* --- TAB 2: MEALS --- */}
       {activeTab === 'meals' && (
-        <div className="tab-panel">
+        <div key="meals-tab" className="tab-panel tab-crossfade">
           <div className="section-toolbar">
             <p className="toolbar-hint">
               Define meals and list every ingredient. Changes automatically trigger a rescan against registered allergies.
@@ -405,42 +411,44 @@ export default function OrganizerDashboard() {
             </div>
           ) : (
             <div className="meals-stack">
-              {meals.map(meal => (
-                <div key={meal._id} className="card meal-card">
-                  <div className="meal-card-main">
-                    <h3 className="meal-title">{meal.name}</h3>
-                    {meal.description && (
-                      <p className="meal-description">{meal.description}</p>
-                    )}
-                    <div className="meal-ingredients-wrapper">
-                      <span className="ingredients-label">
-                        Recorded Ingredients ({meal.ingredients?.length || 0}):
-                      </span>
-                      <div className="chip-list">
-                        {meal.ingredients?.map((ing, i) => (
-                          <span key={i} className="chip">{ing}</span>
-                        ))}
+              {meals.map((meal, index) => (
+                <Reveal key={meal._id} delay={index * 50}>
+                  <div className="card meal-card">
+                    <div className="meal-card-main">
+                      <h3 className="meal-title">{meal.name}</h3>
+                      {meal.description && (
+                        <p className="meal-description">{meal.description}</p>
+                      )}
+                      <div className="meal-ingredients-wrapper">
+                        <span className="ingredients-label">
+                          Recorded Ingredients ({meal.ingredients?.length || 0}):
+                        </span>
+                        <div className="chip-list">
+                          {meal.ingredients?.map((ing, i) => (
+                            <span key={i} className="chip">{ing}</span>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="meal-card-actions">
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-secondary"
-                      onClick={() => openEditMeal(meal)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-ghost"
-                      onClick={() => setMealToDelete(meal)}
-                    >
-                      Delete
-                    </button>
+                    <div className="meal-card-actions">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-secondary"
+                        onClick={() => openEditMeal(meal)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-ghost"
+                        onClick={() => setMealToDelete(meal)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </Reveal>
               ))}
             </div>
           )}
@@ -449,7 +457,7 @@ export default function OrganizerDashboard() {
 
       {/* --- TAB 3: ATTENDEES --- */}
       {activeTab === 'attendees' && (
-        <div className="tab-panel">
+        <div key="attendees-tab" className="tab-panel tab-crossfade">
           <div className="filters-bar">
             <input
               type="text"
@@ -490,8 +498,12 @@ export default function OrganizerDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredAttendees.map(att => (
-                    <tr key={att._id}>
+                  {filteredAttendees.map((att, index) => (
+                    <tr
+                      key={att._id}
+                      className="flag-row-animated"
+                      style={{ animationDelay: `${Math.min(index * 40, 500)}ms` }}
+                    >
                       <td data-label="Attendee">
                         <strong className="cell-primary-text">{att.user?.name || 'Attendee'}</strong>
                         <div className="attendee-email">{att.user?.email}</div>

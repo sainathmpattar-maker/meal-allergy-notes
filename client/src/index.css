@@ -1,6 +1,7 @@
 /* ==========================================================================
-   MEALALLERGY NOTES — DESIGN SYSTEM
+   MEALALLERGY NOTES — DESIGN SYSTEM & ANIMATIONS
    Visual style: Warm, playful, editorial, light theme.
+   Motion: Fast, subtle, accessible 60fps animations.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -31,9 +32,9 @@
   /* Elevation & Shadows */
   --shadow-sm: 0 2px 6px rgba(58, 40, 34, 0.06);
   --shadow-card: 0 4px 14px rgba(58, 40, 34, 0.08);
-  --shadow-hover: 0 8px 24px rgba(58, 40, 34, 0.12);
-  --shadow-modal: 0 16px 36px rgba(58, 40, 34, 0.18);
-  --shadow-toast: 0 8px 20px rgba(58, 40, 34, 0.2);
+  --shadow-hover: 0 10px 28px rgba(58, 40, 34, 0.14);
+  --shadow-modal: 0 16px 36px rgba(58, 40, 34, 0.2);
+  --shadow-toast: 0 8px 24px rgba(58, 40, 34, 0.22);
 
   /* Geometry */
   --radius-pill: 9999px;
@@ -41,6 +42,9 @@
   --radius-modal: 22px;
   --radius-input: 9999px;
   --radius-box: 14px;
+
+  /* Animation Easing */
+  --ease-out-cubic: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* --------------------------------------------------------------------------
@@ -101,7 +105,176 @@ a:hover {
 }
 
 /* --------------------------------------------------------------------------
-   3. Typography & Headings
+   3. Page Transitions & Motion
+   -------------------------------------------------------------------------- */
+@keyframes pageFadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: pageFadeSlide 350ms var(--ease-out-cubic) both;
+  will-change: opacity, transform;
+}
+
+/* Scroll reveal system */
+.reveal-box {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 400ms var(--ease-out-cubic), transform 400ms var(--ease-out-cubic);
+  will-change: opacity, transform;
+}
+
+.reveal-box.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Heading mask & animations */
+.heading-mask {
+  overflow: hidden;
+  display: block;
+}
+
+@keyframes headingSlideUp {
+  from {
+    transform: translateY(105%);
+    opacity: 0.15;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animated-heading {
+  animation: headingSlideUp 420ms var(--ease-out-cubic) both;
+  will-change: transform, opacity;
+}
+
+/* Highlight underline swipe */
+.highlight-swipe {
+  position: relative;
+  display: inline-block;
+  color: var(--tomato);
+}
+
+.highlight-swipe::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  height: 6px;
+  background-color: var(--butter);
+  z-index: -1;
+  border-radius: 4px;
+  animation: swipeUnderline 480ms 180ms var(--ease-out-cubic) both;
+}
+
+@keyframes swipeUnderline {
+  from {
+    width: 0%;
+    opacity: 0;
+  }
+  to {
+    width: 100%;
+    opacity: 0.85;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. Rotating Circular Sticker Badge
+   -------------------------------------------------------------------------- */
+.rotating-sticker-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease-out-cubic);
+  flex-shrink: 0;
+}
+
+.rotating-sticker-container:hover {
+  transform: scale(1.08) rotate(6deg);
+}
+
+@keyframes rotateBadge {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.rotating-sticker-svg {
+  animation: rotateBadge 20s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.sticker-bg {
+  fill: var(--tomato);
+  stroke: var(--brown);
+  stroke-width: 2px;
+}
+
+.sticker-dashed-ring {
+  fill: none;
+  stroke: var(--butter);
+  stroke-width: 1.5px;
+  stroke-dasharray: 4 3;
+}
+
+.sticker-center-circle {
+  fill: var(--cream);
+  stroke: var(--brown);
+  stroke-width: 1.5px;
+}
+
+.sticker-center-emoji {
+  font-size: 15px;
+  user-select: none;
+}
+
+.sticker-text {
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  fill: var(--cream);
+  text-transform: uppercase;
+}
+
+/* Header with Badge Placement */
+.page-header-with-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.header-text-block {
+  flex: 1;
+}
+
+.header-actions-block {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-shrink: 0;
+}
+
+.hero-badge-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   5. Typography & Headings
    -------------------------------------------------------------------------- */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
@@ -163,15 +336,17 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .back-link:hover {
   color: var(--tomato);
   text-decoration: none;
+  transform: translateX(-3px);
 }
 
 /* --------------------------------------------------------------------------
-   4. Buttons
+   6. Buttons & Interactions
    -------------------------------------------------------------------------- */
 .btn {
   display: inline-flex;
@@ -187,7 +362,10 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-pill);
   border: 1.5px solid transparent;
   cursor: pointer;
-  transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition: transform 0.2s var(--ease-out-cubic),
+              background-color 0.2s ease,
+              box-shadow 0.2s var(--ease-out-cubic),
+              border-color 0.2s ease;
   line-height: 1;
   text-decoration: none;
   white-space: nowrap;
@@ -195,13 +373,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(58, 40, 34, 0.14);
+  box-shadow: 0 6px 18px rgba(58, 40, 34, 0.16);
   text-decoration: none;
 }
 
 .btn:active:not(:disabled) {
   transform: translateY(1px);
-  box-shadow: none;
+  box-shadow: 0 2px 6px rgba(58, 40, 34, 0.1);
 }
 
 .btn:disabled {
@@ -273,15 +451,15 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-block;
   font-family: var(--font-ui);
   font-weight: 700;
-  transition: transform 0.18s ease;
+  transition: transform 0.2s var(--ease-out-cubic);
 }
 
 .btn:hover:not(:disabled) .btn-arrow {
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 /* --------------------------------------------------------------------------
-   5. Cards & Containers
+   7. Cards & Elevation
    -------------------------------------------------------------------------- */
 .card {
   background: var(--cream-surface);
@@ -289,7 +467,9 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-card);
   padding: 32px;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.25s var(--ease-out-cubic),
+              box-shadow 0.25s var(--ease-out-cubic),
+              border-color 0.2s ease;
 }
 
 .card-interactive {
@@ -301,9 +481,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-interactive:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-hover);
   border-color: var(--line-strong);
+}
+
+.card-interactive .event-date-chip {
+  transition: transform 0.2s var(--ease-out-cubic);
+}
+
+.card-interactive:hover .event-date-chip {
+  transform: scale(1.04);
 }
 
 .card-grid {
@@ -313,7 +501,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* --------------------------------------------------------------------------
-   6. Form Elements
+   8. Form Elements
    -------------------------------------------------------------------------- */
 .form-group {
   margin-bottom: 1.35rem;
@@ -346,7 +534,7 @@ select,
   font-family: var(--font-body);
   font-size: 0.9375rem;
   color: var(--brown);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 textarea {
@@ -359,7 +547,7 @@ textarea {
   font-size: 0.9375rem;
   color: var(--brown);
   resize: vertical;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 input::placeholder,
@@ -412,8 +600,22 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   7. Chips & Badges
+   9. Chips & Pop-In Animation
    -------------------------------------------------------------------------- */
+@keyframes chipPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .chip {
   display: inline-flex;
   align-items: center;
@@ -428,6 +630,8 @@ textarea:focus {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   border: 1px solid rgba(58, 40, 34, 0.08);
+  animation: chipPopIn 220ms var(--ease-out-cubic) both;
+  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
 }
 
 .chip-allergy {
@@ -448,11 +652,12 @@ textarea:focus {
   justify-content: center;
   padding: 0 0 0 0.2rem;
   opacity: 0.65;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
 .chip-remove:hover {
   opacity: 1;
+  transform: scale(1.2);
 }
 
 .chip-list {
@@ -481,12 +686,12 @@ textarea:focus {
   background-color: transparent;
   color: var(--brown);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: transform 0.15s var(--ease-out-cubic), background-color 0.15s ease;
 }
 
 .quick-pill:hover:not(:disabled) {
   background-color: var(--butter);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .quick-pill:disabled {
@@ -524,6 +729,21 @@ textarea:focus {
   color: var(--cream);
 }
 
+@keyframes badgePulse {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+.badge-status-animated {
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.badge-verified,
+.badge-dismissed {
+  animation: badgePulse 320ms var(--ease-out-cubic);
+}
+
 .badge-role {
   background-color: var(--butter);
   color: var(--brown);
@@ -553,7 +773,7 @@ textarea:focus {
   min-height: 48px;
   align-items: center;
   cursor: text;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.18s, box-shadow 0.18s;
 }
 
 .chip-input-wrapper:focus-within {
@@ -588,6 +808,7 @@ textarea:focus {
   max-height: 180px;
   overflow-y: auto;
   z-index: 50;
+  animation: modalPop 0.18s var(--ease-out-cubic);
 }
 
 .chip-suggestions li {
@@ -599,7 +820,7 @@ textarea:focus {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   color: var(--brown);
-  transition: background 0.1s;
+  transition: background-color 0.12s ease;
 }
 
 .chip-suggestions li:hover {
@@ -607,7 +828,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   8. Navbar
+   10. Navbar & Smooth Scroll Shadow
    -------------------------------------------------------------------------- */
 .navbar {
   position: sticky;
@@ -615,6 +836,15 @@ textarea:focus {
   z-index: 50;
   background-color: var(--cream);
   border-bottom: 1px solid var(--line);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+}
+
+.navbar-scrolled {
+  background-color: rgba(255, 247, 236, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 18px rgba(58, 40, 34, 0.08);
+  border-bottom-color: var(--line-strong);
 }
 
 .navbar-content {
@@ -631,6 +861,11 @@ textarea:focus {
   align-items: center;
   gap: 0.65rem;
   text-decoration: none !important;
+  transition: transform 0.18s var(--ease-out-cubic);
+}
+
+.navbar-brand:hover {
+  transform: scale(1.02);
 }
 
 .brand-icon {
@@ -643,6 +878,11 @@ textarea:focus {
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(58, 40, 34, 0.15);
+  transition: transform 0.25s var(--ease-out-cubic);
+}
+
+.navbar-brand:hover .brand-icon {
+  transform: rotate(15deg);
 }
 
 .brand-wordmark {
@@ -672,13 +912,14 @@ textarea:focus {
   color: var(--brown);
   padding: 0.5rem 1rem;
   border-radius: var(--radius-pill);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .nav-pill-link:hover {
   background-color: var(--butter);
   color: var(--brown);
   text-decoration: none;
+  transform: translateY(-1px);
 }
 
 .navbar-user-chip {
@@ -721,7 +962,7 @@ textarea:focus {
   height: 2px;
   background-color: var(--brown);
   border-radius: 2px;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.22s var(--ease-out-cubic), opacity 0.2s ease;
 }
 
 .hamburger.active span:nth-child(1) {
@@ -740,22 +981,32 @@ textarea:focus {
   }
 
   .navbar-links {
-    display: none;
+    display: flex;
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     background-color: var(--cream);
     border-bottom: 2px solid var(--brown);
-    padding: 1.5rem;
+    padding: 0 1.5rem;
     flex-direction: column;
     align-items: flex-start;
     gap: 1.25rem;
     box-shadow: var(--shadow-card);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height 320ms var(--ease-out-cubic),
+                opacity 240ms ease,
+                padding 320ms var(--ease-out-cubic);
   }
 
   .navbar-links.open {
-    display: flex;
+    max-height: 380px;
+    opacity: 1;
+    padding: 1.5rem;
+    pointer-events: auto;
   }
 
   .navbar-user-chip {
@@ -765,7 +1016,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   9. Allergy Banner & Alerts
+   11. Allergy Banner & Alerts
    -------------------------------------------------------------------------- */
 .allergy-warning-banner {
   background-color: var(--butter);
@@ -778,6 +1029,11 @@ textarea:focus {
   margin-bottom: 2rem;
   color: var(--brown);
   box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+}
+
+.allergy-warning-banner:hover {
+  transform: translateY(-1px);
 }
 
 .banner-icon-badge {
@@ -806,7 +1062,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   10. Pill-Style Tabs
+   12. Pill Tabs & Content Cross-Fade
    -------------------------------------------------------------------------- */
 .tabs-container {
   margin-bottom: 2rem;
@@ -837,17 +1093,22 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: all 0.18s ease;
+  transition: transform 0.2s var(--ease-out-cubic),
+              background-color 0.2s ease,
+              color 0.2s ease,
+              box-shadow 0.2s ease;
 }
 
 .pill-tab-btn:hover:not(.active) {
   background-color: var(--butter);
+  transform: translateY(-1px);
 }
 
 .pill-tab-btn.active {
   background-color: var(--tomato);
   color: var(--cream);
-  box-shadow: 0 2px 8px rgba(217, 71, 43, 0.25);
+  box-shadow: 0 4px 12px rgba(217, 71, 43, 0.28);
+  transform: scale(1.02);
 }
 
 .pill-tab-counter {
@@ -856,6 +1117,7 @@ textarea:focus {
   padding: 2px 7px;
   border-radius: var(--radius-pill);
   font-size: 0.6875rem;
+  transition: all 0.2s ease;
 }
 
 .pill-tab-btn.active .pill-tab-counter {
@@ -863,8 +1125,24 @@ textarea:focus {
   color: var(--tomato);
 }
 
+/* Tab content crossfade */
+@keyframes tabCrossfade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-crossfade {
+  animation: tabCrossfade 280ms var(--ease-out-cubic) both;
+}
+
 /* --------------------------------------------------------------------------
-   11. Data Tables & Responsive Stacked Cards
+   13. Data Tables, Staggered Flags & Stacked Cards
    -------------------------------------------------------------------------- */
 .table-wrapper {
   background-color: var(--cream-surface);
@@ -899,12 +1177,32 @@ textarea:focus {
   color: var(--brown);
 }
 
+.data-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
 .data-table tbody tr:hover {
   background-color: var(--cream-dark);
 }
 
 .data-table tbody tr:last-child td {
   border-bottom: none;
+}
+
+/* Staggered entry animation for flags & rows */
+@keyframes flagEnter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.flag-row-animated {
+  animation: flagEnter 320ms var(--ease-out-cubic) both;
 }
 
 .cell-primary-text {
@@ -1026,7 +1324,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   12. Empty States
+   14. Empty States & Illustrations
    -------------------------------------------------------------------------- */
 .empty-state {
   text-align: center;
@@ -1049,6 +1347,7 @@ textarea:focus {
   font-size: 3rem;
   display: inline-block;
   animation: floatSlow 3s ease-in-out infinite;
+  transition: transform 0.2s ease;
 }
 
 .empty-fork {
@@ -1058,7 +1357,7 @@ textarea:focus {
 
 @keyframes floatSlow {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-7px); }
 }
 
 .empty-state-message {
@@ -1077,18 +1376,25 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   13. Modals & Dialogs
+   15. Modals & Dialogs
    -------------------------------------------------------------------------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
   background-color: rgba(58, 40, 34, 0.6);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
   padding: 1rem;
+  animation: overlayFade 200ms ease-out;
+}
+
+@keyframes overlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal {
@@ -1099,13 +1405,13 @@ textarea:focus {
   width: 100%;
   max-width: 520px;
   box-shadow: var(--shadow-modal);
-  animation: modalPop 0.2s ease-out;
+  animation: modalPop 220ms var(--ease-out-cubic);
 }
 
 @keyframes modalPop {
   from {
     opacity: 0;
-    transform: scale(0.96) translateY(10px);
+    transform: scale(0.95) translateY(12px);
   }
   to {
     opacity: 1;
@@ -1134,17 +1440,28 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   14. Toasts
+   16. Top-Right Slide Toasts
    -------------------------------------------------------------------------- */
 .toast-container {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  top: 1.5rem;
+  right: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   z-index: 200;
   max-width: 380px;
+}
+
+@keyframes toastSlideInTop {
+  from {
+    opacity: 0;
+    transform: translateX(35px) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
 }
 
 .toast {
@@ -1159,13 +1476,9 @@ textarea:focus {
   align-items: center;
   justify-content: space-between;
   gap: 0.85rem;
-  animation: slideToast 0.25s ease-out;
+  animation: toastSlideInTop 320ms var(--ease-out-cubic) both;
   border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-@keyframes slideToast {
-  from { transform: translateY(16px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .toast-info {
@@ -1196,44 +1509,58 @@ textarea:focus {
   cursor: pointer;
   line-height: 1;
   opacity: 0.75;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
 .toast-close:hover {
   opacity: 1;
+  transform: scale(1.15);
 }
 
 /* --------------------------------------------------------------------------
-   15. Loading Spinner
+   17. Loading Spinner & Skeleton Pulsing
    -------------------------------------------------------------------------- */
 .spinner-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 1rem;
-  gap: 1rem;
+  padding: 4.5rem 1rem;
+  gap: 1.25rem;
 }
 
 .spinner-plate {
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 68px;
+  height: 68px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--butter);
+  border-radius: 50%;
+  border: 2px solid var(--brown);
+  box-shadow: 0 4px 12px rgba(58, 40, 34, 0.1);
+  animation: gentleBob 2s ease-in-out infinite;
+}
+
+@keyframes gentleBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 .spinner-emoji {
-  font-size: 1.75rem;
+  font-size: 2rem;
+  user-select: none;
 }
 
 .spinner-ring {
   position: absolute;
-  inset: 0;
-  border: 3px solid rgba(217, 71, 43, 0.2);
+  inset: -6px;
+  border: 3px solid transparent;
   border-top-color: var(--tomato);
+  border-right-color: var(--tomato);
   border-radius: 50%;
-  animation: spin 0.9s linear infinite;
+  animation: spin 0.85s linear infinite;
 }
 
 @keyframes spin {
@@ -1247,8 +1574,20 @@ textarea:focus {
   color: var(--brown-muted);
 }
 
+/* Skeleton pulse for cards */
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.skeleton-box {
+  background: linear-gradient(90deg, var(--cream-dark) 0%, #faeee0 50%, var(--cream-dark) 100%);
+  border-radius: 8px;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
 /* --------------------------------------------------------------------------
-   16. Auth Pages (Login & Register)
+   18. Auth Pages (Login & Register)
    -------------------------------------------------------------------------- */
 .auth-page {
   min-height: calc(100vh - 280px);
@@ -1266,6 +1605,7 @@ textarea:focus {
   width: 100%;
   max-width: 460px;
   box-shadow: var(--shadow-card);
+  animation: modalPop 260ms var(--ease-out-cubic);
 }
 
 .auth-header {
@@ -1295,6 +1635,7 @@ textarea:focus {
   font-size: 0.8125rem;
   font-weight: 600;
   margin-bottom: 1.25rem;
+  animation: modalPop 0.18s var(--ease-out-cubic);
 }
 
 .auth-link {
@@ -1306,7 +1647,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   17. Event Cards & Listings
+   19. Event Cards & Listings
    -------------------------------------------------------------------------- */
 .event-card-header {
   margin-bottom: 1.5rem;
@@ -1360,11 +1701,11 @@ textarea:focus {
 }
 
 .cta-arrow {
-  transition: transform 0.18s ease;
+  transition: transform 0.2s var(--ease-out-cubic);
 }
 
 .card-interactive:hover .cta-arrow {
-  transform: translateX(4px);
+  transform: translateX(5px);
 }
 
 .event-card-actions {
@@ -1373,15 +1714,23 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   18. Attendee Event Page Layout
+   20. Attendee Event Page Layout
    -------------------------------------------------------------------------- */
 .event-hero-card {
   background-color: var(--butter);
   border: 1.5px solid var(--brown);
   border-radius: var(--radius-card);
-  padding: 2.25rem;
+  padding: 2.25rem 2.5rem;
   margin-bottom: 2.25rem;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.hero-content {
+  flex: 1;
 }
 
 .hero-title {
@@ -1407,6 +1756,11 @@ textarea:focus {
   padding: 0.45rem 1rem;
   border-radius: var(--radius-pill);
   border: 1px solid var(--line);
+  transition: transform 0.15s ease;
+}
+
+.meta-pill:hover {
+  transform: translateY(-1px);
 }
 
 .two-column-layout {
@@ -1453,12 +1807,13 @@ textarea:focus {
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 1.15rem;
-  transition: transform 0.15s ease;
+  transition: transform 0.2s var(--ease-out-cubic), border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .menu-item-card:hover {
-  transform: translateX(3px);
+  transform: translateX(4px);
   border-color: var(--line-strong);
+  box-shadow: 0 4px 12px rgba(58, 40, 34, 0.08);
 }
 
 .menu-item-name {
@@ -1478,7 +1833,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   19. Organiser Dashboard Specifics
+   21. Organiser Dashboard Specifics
    -------------------------------------------------------------------------- */
 .controls-bar,
 .section-toolbar,
@@ -1565,7 +1920,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   20. My Registrations Page
+   22. My Registrations Page
    -------------------------------------------------------------------------- */
 .registration-card {
   display: flex;
@@ -1608,7 +1963,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   21. 404 Not Found Page
+   23. 404 Not Found Page
    -------------------------------------------------------------------------- */
 .not-found-state {
   margin: 4rem auto;
@@ -1620,6 +1975,7 @@ textarea:focus {
   color: var(--tomato);
   line-height: 0.9;
   margin-bottom: 0.5rem;
+  animation: gentleBob 2.5s ease-in-out infinite;
 }
 
 .not-found-title {
@@ -1633,7 +1989,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   22. Footer
+   24. Footer Wordmark Reveal
    -------------------------------------------------------------------------- */
 .site-footer {
   background-color: var(--forest);
@@ -1670,12 +2026,13 @@ textarea:focus {
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   color: var(--cream);
-  transition: color 0.15s ease;
+  transition: color 0.15s ease, transform 0.15s ease;
 }
 
 .footer-links a:hover {
   color: var(--butter);
   text-decoration: underline;
+  transform: translateY(-1px);
 }
 
 .footer-note-link {
@@ -1702,6 +2059,11 @@ textarea:focus {
   max-width: 1180px;
   margin: 0 auto 2rem auto;
   text-align: center;
+  overflow: hidden;
+}
+
+.footer-wordmark-reveal {
+  overflow: hidden;
 }
 
 .footer-wordmark {
@@ -1712,6 +2074,15 @@ textarea:focus {
   line-height: 0.9;
   display: block;
   user-select: none;
+  transform: translateY(35px);
+  opacity: 0.2;
+  transition: transform 600ms var(--ease-out-cubic), opacity 600ms ease;
+  will-change: transform, opacity;
+}
+
+.footer-wordmark-reveal.is-revealed .footer-wordmark {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .footer-bottom-row {
@@ -1732,7 +2103,7 @@ textarea:focus {
 }
 
 /* --------------------------------------------------------------------------
-   23. Screen Responsiveness (375px, 768px, 1280px)
+   25. Screen Responsiveness & Accessibility
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
   .page-title {
@@ -1751,6 +2122,12 @@ textarea:focus {
     padding: 1.75rem 1.25rem;
   }
 
+  .event-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.75rem 1.25rem;
+  }
+
   .hero-title {
     font-size: 1.85rem;
   }
@@ -1758,7 +2135,7 @@ textarea:focus {
   .toast-container {
     left: 1rem;
     right: 1rem;
-    bottom: 1rem;
+    top: 1rem;
     max-width: none;
   }
 
@@ -1773,5 +2150,38 @@ textarea:focus {
 
   .footer-wordmark {
     font-size: 3rem;
+  }
+
+  .header-actions-block {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Reduced Motion Preference (Strict WCAG 2.2 AA) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .page-transition,
+  .reveal-box,
+  .animated-heading,
+  .flag-row-animated,
+  .footer-wordmark {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .rotating-sticker-svg,
+  .empty-emoji,
+  .spinner-ring,
+  .spinner-plate {
+    animation: none !important;
   }
 }

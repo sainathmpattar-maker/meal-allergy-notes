@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -6,6 +6,20 @@ export default function Navbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 15) {
+        setScrolled(true)
+      } else {
+        setScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleLogout = () => {
     logout()
@@ -14,7 +28,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`}>
       <div className="navbar-content">
         <Link to="/" className="navbar-brand" onClick={() => setMenuOpen(false)}>
           <span className="brand-icon" aria-hidden="true">

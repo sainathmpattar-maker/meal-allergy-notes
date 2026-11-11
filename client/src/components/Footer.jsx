@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Reveal from './Reveal'
 
 export default function Footer() {
   return (
@@ -7,7 +8,7 @@ export default function Footer() {
       <div className="footer-top-row">
         <div className="footer-links">
           <Link to="/">Events</Link>
-          <a href="#how-it-works" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Back to top ↑</a>
+          <a href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Back to top ↑</a>
           <span className="footer-note-link">Automated Checking & Human Verification</span>
         </div>
         <div className="footer-tagline">
@@ -16,7 +17,9 @@ export default function Footer() {
       </div>
 
       <div className="footer-marquee">
-        <span className="footer-wordmark">MEALALLERGY NOTES</span>
+        <Reveal delay={100} className="footer-wordmark-reveal">
+          <span className="footer-wordmark">MEALALLERGY NOTES</span>
+        </Reveal>
       </div>
 
       <div className="footer-bottom-row">

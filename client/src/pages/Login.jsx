@@ -45,7 +45,11 @@ export default function Login() {
       <div className="auth-card">
         <div className="auth-header">
           <span className="eyebrow-label">Access Portal</span>
-          <h1 className="page-title">SIGN <span className="word-accent">IN.</span></h1>
+          <div className="heading-mask">
+            <h1 className="page-title animated-heading">
+              SIGN <span className="word-accent highlight-swipe">IN.</span>
+            </h1>
+          </div>
           <p className="auth-tagline">Coordinate dietary notes & allergies with total care.</p>
         </div>
 

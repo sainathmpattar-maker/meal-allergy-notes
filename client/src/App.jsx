@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './components/Toast'
 import Navbar from './components/Navbar'
@@ -15,62 +15,72 @@ import OrganizerDashboard from './pages/OrganizerDashboard'
 import MyRegistrations from './pages/MyRegistrations'
 import NotFound from './pages/NotFound'
 
+function AnimatedAppContent() {
+  const location = useLocation()
+
+  return (
+    <div className="app-container">
+      <Navbar />
+      <main className="main-content">
+        <div key={location.pathname} className="page-transition">
+          <Routes location={location}>
+            {/* Public auth routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+
+            {/* Protected routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <EventsList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/events/:eventId"
+              element={
+                <ProtectedRoute>
+                  <AttendeeEventPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-registrations"
+              element={
+                <ProtectedRoute>
+                  <MyRegistrations />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Organiser only route */}
+            <Route
+              path="/events/:eventId/organizer"
+              element={
+                <RoleRoute role="organiser">
+                  <OrganizerDashboard />
+                </RoleRoute>
+              }
+            />
+
+            {/* 404 fallback */}
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
-          <div className="app-container">
-            <Navbar />
-            <main className="main-content">
-              <Routes>
-                {/* Public auth routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-
-                {/* Protected routes */}
-                <Route
-                  path="/"
-                  element={
-                    <ProtectedRoute>
-                      <EventsList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/events/:eventId"
-                  element={
-                    <ProtectedRoute>
-                      <AttendeeEventPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/my-registrations"
-                  element={
-                    <ProtectedRoute>
-                      <MyRegistrations />
-                    </ProtectedRoute>
-                  }
-                />
-
-                {/* Organiser only route */}
-                <Route
-                  path="/events/:eventId/organizer"
-                  element={
-                    <RoleRoute role="organiser">
-                      <OrganizerDashboard />
-                    </RoleRoute>
-                  }
-                />
-
-                {/* 404 fallback */}
-                <Route path="/404" element={<NotFound />} />
-                <Route path="*" element={<Navigate to="/404" replace />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
+          <AnimatedAppContent />
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
