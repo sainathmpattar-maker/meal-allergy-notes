@@ -74,8 +74,8 @@ export default function Navbar() {
           </>
         ) : (
           <div className="navbar-auth-links">
-            <Link to="/login" className="nav-pill-link">
-              Sign In
+            <Link to="/login" className="btn btn-sm btn-ghost">
+              Log in
             </Link>
             <Link to="/register" className="btn btn-sm btn-primary">
               Register <span className="btn-arrow">→</span>

@@ -1,19 +1,27 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastProvider } from './components/Toast'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import RoleRoute from './components/RoleRoute'
+import LoadingSpinner from './components/LoadingSpinner'
 
 import Login from './pages/Login'
 import Register from './pages/Register'
+import LandingPage from './pages/LandingPage'
 import EventsList from './pages/EventsList'
 import AttendeeEventPage from './pages/AttendeeEventPage'
 import OrganizerDashboard from './pages/OrganizerDashboard'
 import MyRegistrations from './pages/MyRegistrations'
 import NotFound from './pages/NotFound'
+
+function HomeRoute() {
+  const { user, loading } = useAuth()
+  if (loading) return <LoadingSpinner />
+  return user ? <EventsList /> : <LandingPage />
+}
 
 function AnimatedAppContent() {
   const location = useLocation()
@@ -28,15 +36,10 @@ function AnimatedAppContent() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Protected routes */}
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <EventsList />
-                </ProtectedRoute>
-              }
-            />
+            {/* Home route: LandingPage for logged-out, EventsList for logged-in */}
+            <Route path="/" element={<HomeRoute />} />
+
+            {/* Protected attendee and event routes */}
             <Route
               path="/events/:eventId"
               element={

@@ -58,3 +58,4 @@ export default function RotatingSticker({ size = 110, className = '' }) {
     </div>
   )
 }
+
