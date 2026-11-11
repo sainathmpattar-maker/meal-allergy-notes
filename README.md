@@ -2,6 +2,11 @@
 
 A restricted-access meal planning and attendee preference management tool designed for event organisers.
 
+## Live Demo & Repository
+
+- **Live Application**: [https://meal-allergy-notes.onrender.com/](https://meal-allergy-notes.onrender.com/)
+- **GitHub Repository**: [https://github.com/sainathmpattar-maker/meal-allergy-notes](https://github.com/sainathmpattar-maker/meal-allergy-notes)
+
 Event organisers frequently struggle to coordinate dietary preferences and allergy notes across registrations. **MealAllergy Notes** solves this by providing a unified workflow: attendees securely declare their dietary preferences, allergies, and notes; organisers plan meals with ingredient lists; and an automated conflict engine scans for potential allergen-ingredient conflicts to flag them for **human verification**.
 
 > ⚠️ **CRITICAL SAFETY NOTICE:**
