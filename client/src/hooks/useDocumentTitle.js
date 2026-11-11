@@ -6,3 +6,4 @@ export default function useDocumentTitle(title) {
     document.title = title ? `${title} | ${baseTitle}` : `${baseTitle} — Safe Dining & Human Verification`
   }, [title])
 }
+

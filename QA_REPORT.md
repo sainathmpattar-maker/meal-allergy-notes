@@ -101,3 +101,4 @@ All discovered issues were fixed at the root cause, verified with clean regressi
 5. **Reverse Proxy Trust for Rate Limiting**:
    - *Issue*: Behind reverse proxies (e.g. Render), `req.ip` reflects the proxy IP rather than the client IP unless trust proxy is enabled.
    - *Fix*: Added `app.set('trust proxy', 1)` in `server/index.js`.
+
