@@ -3,8 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../components/Toast'
 import api from '../api/axios'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function Login() {
+  useDocumentTitle('Sign In')
   const [form, setForm] = useState({ email: '', password: '' })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)

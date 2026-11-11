@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Reveal from '../components/Reveal'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function MyRegistrations() {
+  useDocumentTitle('My Registrations')
   const [registrations, setRegistrations] = useState([])
   const [loading, setLoading] = useState(true)
 

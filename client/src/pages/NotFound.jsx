@@ -1,7 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function NotFound() {
+  useDocumentTitle('404 Page Not Found')
   return (
     <div className="empty-state not-found-state">
       <div className="empty-state-icon" aria-hidden="true">

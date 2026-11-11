@@ -3,8 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../components/Toast'
 import api from '../api/axios'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function Register() {
+  useDocumentTitle('Create Account')
   const [form, setForm] = useState({ name: '', email: '', password: '', organiserCode: '' })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)

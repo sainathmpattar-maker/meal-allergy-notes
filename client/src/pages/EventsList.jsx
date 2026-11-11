@@ -7,8 +7,10 @@ import ConfirmDialog from '../components/ConfirmDialog'
 import Reveal from '../components/Reveal'
 import RotatingSticker from '../components/RotatingSticker'
 import api from '../api/axios'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function EventsList() {
+  useDocumentTitle('Your Events')
   const { user } = useAuth()
   const toast = useToast()
   const navigate = useNavigate()

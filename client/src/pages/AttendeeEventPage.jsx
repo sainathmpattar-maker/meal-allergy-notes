@@ -8,6 +8,7 @@ import ConfirmDialog from '../components/ConfirmDialog'
 import Reveal from '../components/Reveal'
 import RotatingSticker from '../components/RotatingSticker'
 import api from '../api/axios'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const COMMON_ALLERGENS = [
   'peanut', 'dairy', 'egg', 'gluten', 'soy',
@@ -20,6 +21,7 @@ export default function AttendeeEventPage() {
   const toast = useToast()
 
   const [event, setEvent] = useState(null)
+  useDocumentTitle(event?.title ? `${event.title} — Dining Preferences` : 'Dining Preferences')
   const [meals, setMeals] = useState([])
   const [registration, setRegistration] = useState(null)
   const [loading, setLoading] = useState(true)

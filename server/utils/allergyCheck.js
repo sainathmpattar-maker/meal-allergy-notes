@@ -7,18 +7,22 @@
  */
 
 const SYNONYM_MAP = {
-  peanut: ['peanut', 'groundnut', 'arachis', 'satay'],
-  dairy: ['milk', 'cheese', 'butter', 'ghee', 'paneer', 'cream', 'curd', 'yogurt', 'whey', 'casein', 'lactose'],
-  milk: ['milk', 'cheese', 'butter', 'ghee', 'paneer', 'cream', 'curd', 'yogurt', 'whey', 'casein', 'lactose'],
-  egg: ['egg', 'mayonnaise', 'albumin'],
-  gluten: ['wheat', 'flour', 'maida', 'atta', 'semolina', 'rava', 'barley', 'rye', 'bread', 'gluten'],
-  wheat: ['wheat', 'flour', 'maida', 'atta', 'semolina', 'rava', 'barley', 'rye', 'bread', 'gluten'],
-  soy: ['soy', 'soya', 'tofu', 'edamame'],
-  'tree nut': ['almond', 'cashew', 'walnut', 'pistachio', 'hazelnut', 'pecan'],
-  shellfish: ['shrimp', 'prawn', 'crab', 'lobster'],
-  fish: ['fish', 'salmon', 'tuna', 'cod', 'tilapia', 'anchovy', 'sardine'],
-  sesame: ['sesame', 'tahini', 'til'],
-  mustard: ['mustard'],
+  peanut: ['peanut', 'peanuts', 'groundnut', 'arachis', 'satay'],
+  peanuts: ['peanut', 'peanuts', 'groundnut', 'arachis', 'satay'],
+  dairy: ['milk', 'cheese', 'butter', 'ghee', 'paneer', 'cream', 'curd', 'dahi', 'yogurt', 'yoghurt', 'buttermilk', 'whey', 'casein', 'lactose'],
+  milk: ['milk', 'cheese', 'butter', 'ghee', 'paneer', 'cream', 'curd', 'dahi', 'yogurt', 'yoghurt', 'buttermilk', 'whey', 'casein', 'lactose'],
+  egg: ['egg', 'eggs', 'mayonnaise', 'albumin'],
+  eggs: ['egg', 'eggs', 'mayonnaise', 'albumin'],
+  gluten: ['wheat', 'flour', 'maida', 'atta', 'semolina', 'rava', 'sooji', 'barley', 'rye', 'bread', 'gluten'],
+  wheat: ['wheat', 'flour', 'maida', 'atta', 'semolina', 'rava', 'sooji', 'barley', 'rye', 'bread', 'gluten'],
+  soy: ['soy', 'soya', 'tofu', 'edamame', 'tamari', 'miso'],
+  soya: ['soy', 'soya', 'tofu', 'edamame', 'tamari', 'miso'],
+  'tree nut': ['almond', 'cashew', 'walnut', 'pistachio', 'hazelnut', 'pecan', 'macadamia', 'praline', 'marzipan'],
+  'tree nuts': ['almond', 'cashew', 'walnut', 'pistachio', 'hazelnut', 'pecan', 'macadamia', 'praline', 'marzipan'],
+  shellfish: ['shrimp', 'shrimps', 'prawn', 'prawns', 'crab', 'crabs', 'lobster', 'lobsters', 'clam', 'mussel', 'oyster'],
+  fish: ['fish', 'salmon', 'tuna', 'cod', 'tilapia', 'anchovy', 'sardine', 'trout', 'halibut'],
+  sesame: ['sesame', 'tahini', 'til', 'gingelly'],
+  mustard: ['mustard', 'kasundi'],
 };
 
 // Build reverse map: ingredient keyword -> list of canonical allergen names

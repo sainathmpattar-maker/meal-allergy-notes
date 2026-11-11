@@ -7,6 +7,7 @@ import ChipInput from '../components/ChipInput'
 import ConfirmDialog from '../components/ConfirmDialog'
 import Reveal from '../components/Reveal'
 import api from '../api/axios'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function OrganizerDashboard() {
   const { eventId } = useParams()
@@ -15,6 +16,7 @@ export default function OrganizerDashboard() {
 
   const [activeTab, setActiveTab] = useState('flags') // 'flags' | 'meals' | 'attendees'
   const [event, setEvent] = useState(null)
+  useDocumentTitle(event?.title ? `${event.title} — Organiser Dashboard` : 'Organiser Dashboard')
   const [meals, setMeals] = useState([])
   const [attendees, setAttendees] = useState([])
   const [flags, setFlags] = useState([])

@@ -67,16 +67,16 @@ Organiser accounts require the secret `ORGANISER_CODE` during registration.
 
 ### Synonym Map
 The engine (`server/utils/allergyCheck.js`) maps common allergens to culinary and regional synonyms:
-- **Peanut**: `peanut`, `groundnut`, `arachis`, `satay`
-- **Dairy / Milk**: `milk`, `cheese`, `butter`, `ghee`, `paneer`, `cream`, `curd`, `yogurt`, `whey`, `casein`, `lactose`
-- **Egg**: `egg`, `mayonnaise`, `albumin`
-- **Gluten / Wheat**: `wheat`, `flour`, `maida`, `atta`, `semolina`, `rava`, `barley`, `rye`, `bread`, `gluten`
-- **Soy**: `soy`, `soya`, `tofu`, `edamame`
-- **Tree Nut**: `almond`, `cashew`, `walnut`, `pistachio`, `hazelnut`, `pecan`
-- **Shellfish**: `shrimp`, `prawn`, `crab`, `lobster`
-- **Fish**: `fish`, `salmon`, `tuna`, `cod`, `tilapia`, `anchovy`, `sardine`
-- **Sesame**: `sesame`, `tahini`, `til`
-- **Mustard**: `mustard`
+- **Peanut**: `peanut`, `peanuts`, `groundnut`, `arachis`, `satay`
+- **Dairy / Milk**: `milk`, `cheese`, `butter`, `ghee`, `paneer`, `cream`, `curd`, `dahi`, `yogurt`, `yoghurt`, `buttermilk`, `whey`, `casein`, `lactose`
+- **Egg**: `egg`, `eggs`, `mayonnaise`, `albumin`
+- **Gluten / Wheat**: `wheat`, `flour`, `maida`, `atta`, `semolina`, `rava`, `sooji`, `barley`, `rye`, `bread`, `gluten`
+- **Soy**: `soy`, `soya`, `tofu`, `edamame`, `tamari`, `miso`
+- **Tree Nut**: `almond`, `cashew`, `walnut`, `pistachio`, `hazelnut`, `pecan`, `macadamia`, `praline`, `marzipan`
+- **Shellfish**: `shrimp`, `shrimps`, `prawn`, `prawns`, `crab`, `crabs`, `lobster`, `lobsters`, `clam`, `mussel`, `oyster`
+- **Fish**: `fish`, `salmon`, `tuna`, `cod`, `tilapia`, `anchovy`, `sardine`, `trout`, `halibut`
+- **Sesame**: `sesame`, `tahini`, `til`, `gingelly`
+- **Mustard**: `mustard`, `kasundi`
 
 ### Matching Logic
 1. Each attendee's declared allergy is expanded into its synonym keywords.

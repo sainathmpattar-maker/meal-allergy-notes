@@ -2,8 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
 import RotatingSticker from '../components/RotatingSticker'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function LandingPage() {
+  useDocumentTitle('Safe Event Dining & Human Verification')
   return (
     <div className="landing-page">
       {/* 1. Split Hero Section */}
@@ -233,3 +235,4 @@ export default function LandingPage() {
     </div>
   )
 }
+

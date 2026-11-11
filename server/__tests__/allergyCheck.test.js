@@ -156,4 +156,16 @@ describe('findConflicts', () => {
     const result = findConflicts(['gluten'], ['noodles', 'wheat flour', 'satay sauce']);
     expect(result.length).toBeGreaterThanOrEqual(1);
   });
+
+  test('detects regional synonyms: dahi for dairy, maida for gluten, and prawns for shellfish', () => {
+    const dairyResult = findConflicts(['dairy'], ['spiced dahi raita']);
+    expect(dairyResult).toHaveLength(1);
+    expect(dairyResult[0].matchedIngredient).toBe('spiced dahi raita');
+
+    const glutenResult = findConflicts(['gluten'], ['deep fried maida puri']);
+    expect(glutenResult).toHaveLength(1);
+
+    const shellfishResult = findConflicts(['shellfish'], ['grilled garlic prawns']);
+    expect(shellfishResult).toHaveLength(1);
+  });
 });
