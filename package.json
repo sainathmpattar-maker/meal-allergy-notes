@@ -1,0 +1,14 @@
+{
+  "name": "meal-allergy-notes",
+  "version": "1.0.0",
+  "description": "Meal preference and allergy note manager for event organisers",
+  "scripts": {
+    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "start": "node server/index.js",
+    "dev": "npx concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "seed": "node server/seed.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
